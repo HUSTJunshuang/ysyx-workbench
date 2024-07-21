@@ -1,6 +1,6 @@
-# TODO change to wildcard?
+# can be changed by make -e 'TOPNAME=<your_top_name>
 TOPNAME = top
-NXDC_FILES = constr/top.nxdc
+NXDC_FILES = constr/$(TOPNAME).nxdc
 INC_PATH ?=
 
 VERILATOR = verilator
