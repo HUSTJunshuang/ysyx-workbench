@@ -8,7 +8,7 @@ static TOP_NAME dut;
 // declaration of bind func
 void nvboard_bind_all_pins(TOP_NAME *top);
 
-// func to go on to next cycle
+// func to step to next cycle
 static void single_cycle() {
 	dut.clk = 0; dut.eval();
 	dut.clk = 1; dut.eval();
