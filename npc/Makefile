@@ -1,4 +1,4 @@
-# can be changed by make -e 'TOPNAME=<your_top_name>
+# can be changed by make -e 'TOPNAME=<your_top_name>, BUT the #include <Vtop.h> in main.cpp should be changed too
 TOPNAME = top
 NXDC_FILES = constr/$(TOPNAME).nxdc
 INC_PATH ?=
@@ -11,7 +11,7 @@ OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
 
 all: $(BIN)
-	@echo "Write this Makefile by your self."
+	@echo "Finished compiling, run \"make sim\" to simulate."
 
 # make the BUILD_DIR, excute in sequence?
 $(shell mkdir -p $(BUILD_DIR))
