@@ -15,6 +15,7 @@
 
 #include <isa.h>
 #include <cpu/cpu.h>
+#include <memory/paddr.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
@@ -58,6 +59,7 @@ static int cmd_si(char *args) {
     cpu_exec(1);
   }
   else {
+    // TODO si x
     int step = atoi(arg);
     cpu_exec(step);
   }
@@ -66,6 +68,9 @@ static int cmd_si(char *args) {
 
 static int cmd_info(char *args) {
   char *arg = strtok(NULL, " ");
+  if (arg == NULL) {
+    goto error;
+  }
   if (strcmp(arg, "r") == 0) {
     isa_reg_display();
   }
@@ -74,8 +79,33 @@ static int cmd_info(char *args) {
     printf("TBD\n");
   }
   else {
-    printf("Usage: 'info r'(show regs value) or 'info w'(show watchpoints)\n");
+    goto error;
   }
+  return 0;
+
+error:
+  printf("Usage: 'info r'(show regs value) or 'info w'(show watchpoints)\n");
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  int len;
+  paddr_t addr;
+  char *arg = strtok(NULL, " ");
+  if (arg == NULL)  goto error;
+  len = atoi(arg);
+  arg = strtok(NULL, " ");
+  if (arg == NULL)  goto error;
+  sscanf(arg, "0x%x", &addr);
+  for (int i = 0; i < len; i++) {
+    // display mem value
+    uint32_t m = paddr_read(addr + i * 4, 4);
+    printf("0x%x <tag>:\t0x%x\n", addr + i * 4, m);
+  }
+  return 0;
+
+error:
+  printf("Usage: 'x N ADDR', N refers to scan length, ADDR refers to the start address, which can be a expression.");
   return 0;
 }
 
@@ -89,8 +119,11 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-  { "si", "Single-step execution,\n\tUsage: 'si [N]', N refers to execution times, with a default value 1.", cmd_si },
+  { "si", "Single-step execution,\n\
+          \tUsage: 'si [N]', N refers to execution times, with a default value 1.", cmd_si },
   { "info", "Display information about regs('info r') or wathcpoints('info w')", cmd_info },
+  { "x", "Display memory content,\n\
+          \tUasge: 'x N ADDR', N refers to scan length, ADDR refers to the start address, which can be a expression.", cmd_x },
   /* TODO: Add more commands */
 
 };
