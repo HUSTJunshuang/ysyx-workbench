@@ -102,7 +102,7 @@ static int cmd_x(char *args) {
   // process address
   arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
-  ret = sscanf(arg, "0x%x%s", &addr, extra);
+  ret = sscanf(arg, "0x%x %s", &addr, extra);
   printf("ret = %d\n", ret);
   if (ret == 0)  goto error;
   // four word in a line
