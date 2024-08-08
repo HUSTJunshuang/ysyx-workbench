@@ -91,9 +91,11 @@ error:
 static int cmd_x(char *args) {
   paddr_t addr;
   int len;
+  // process len
   char *arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
   len = atoi(arg);
+  // process address
   arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
   sscanf(arg, "0x%x", &addr);
