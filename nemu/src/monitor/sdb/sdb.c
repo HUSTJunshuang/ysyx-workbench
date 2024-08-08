@@ -99,14 +99,14 @@ static int cmd_x(char *args) {
   ret = sscanf(arg, "%d%s", &len, extra);
   printf("ret = %d\n", ret);
   printf("extra = %s\n", extra);
-  if (ret == 0)  goto error;
+  if (ret != 1)  goto error;
   // process address
   arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
   ret = sscanf(arg, "0x%x %s", &addr, extra);
   printf("ret = %d\n", ret);
   printf("extra = %s\n", extra);
-  if (ret == 0)  goto error;
+  if (ret != 1)  goto error;
   // four word in a line
   for (int i = 0; i < len; i += 4) {
     printf("0x%x <tag>:", addr + i * 4);
