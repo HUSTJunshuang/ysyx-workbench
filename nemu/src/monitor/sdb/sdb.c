@@ -91,6 +91,7 @@ error:
 static int cmd_x(char *args) {
   paddr_t addr;
   int len;
+  char *extra = NULL;
   // process len
   char *arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
@@ -98,7 +99,7 @@ static int cmd_x(char *args) {
   // process address
   arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
-  int ret = sscanf(arg, "0x%x", &addr);
+  int ret = sscanf(arg, "0x%x %s", &addr, extra);
   printf("ret = %d\n", ret);
   if (ret == 0)  goto error;
   // four word in a line
