@@ -99,6 +99,7 @@ static int cmd_x(char *args) {
   arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
   int ret = sscanf(arg, "0x%x", &addr);
+  printf("ret = %d", ret);
   if (ret == -1)  goto error;
   // four word in a line
   for (int i = 0; i < len; i += 4) {
