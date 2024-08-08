@@ -100,7 +100,7 @@ static int cmd_x(char *args) {
   for (int i = 0; i < len; i++) {
     // display mem value
     uint32_t m = paddr_read(addr + i * 4, 4);
-    printf("0x%x <tag>:\t0x%8x\n", addr + i * 4, m);
+    printf("0x%x <tag>:\t0x%08x\n", addr + i * 4, m);
   }
   return 0;
 
