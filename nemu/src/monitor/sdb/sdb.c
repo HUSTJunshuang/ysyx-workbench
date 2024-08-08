@@ -121,7 +121,7 @@ static int cmd_x(char *args) {
   return 0;
 
 error:
-  printf("Usage: 'x N ADDR', N refers to scan length, ADDR refers to the start address, which can be a expression.\n");
+  printf("Usage: 'x N ADDR', N(int) refers to scan length, ADDR refers to the start address, which can be a expression.\n");
   return 0;
 }
 
@@ -136,10 +136,10 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   { "si", "Single-step execution,\n\
-          \tUsage: 'si [N]', N refers to execution times, with a default value 1.", cmd_si },
+          \tUsage: 'si [N]', N(int) refers to execution times, with a default value 1.", cmd_si },
   { "info", "Display information about regs('info r') or wathcpoints('info w')", cmd_info },
   { "x", "Display memory content,\n\
-          \tUasge: 'x N ADDR', N refers to scan length, ADDR refers to the start address, which can be a expression.", cmd_x },
+          \tUasge: 'x N ADDR', N(int) refers to scan length, ADDR refers to the start address, which can be a expression.", cmd_x },
   /* TODO: Add more commands */
 
 };
