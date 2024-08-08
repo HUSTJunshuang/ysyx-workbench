@@ -71,6 +71,7 @@ static int cmd_info(char *args) {
   }
   else if (*arg == 'w') {
     // TODO print watchpoint
+    printf("TBD\n");
   }
   return 0;
 }
