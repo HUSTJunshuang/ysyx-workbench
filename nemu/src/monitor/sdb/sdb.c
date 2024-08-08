@@ -92,7 +92,7 @@ static int cmd_x(char *args) {
   paddr_t addr;
   int len;
   int ret;
-  char *extra = NULL;
+  char extra[512];
   // process len
   char *arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
@@ -104,6 +104,7 @@ static int cmd_x(char *args) {
   if (arg == NULL)  goto error;
   ret = sscanf(arg, "0x%x %s", &addr, extra);
   printf("ret = %d\n", ret);
+  printf("extra = %s\n", extra);
   if (ret == 0)  goto error;
   // four word in a line
   for (int i = 0; i < len; i += 4) {
