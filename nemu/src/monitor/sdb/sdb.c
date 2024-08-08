@@ -92,7 +92,7 @@ static int cmd_x(char *args) {
   paddr_t addr;
   int len;
   int ret;
-  char extra[512];
+  char extra[512] = "";
   // process len
   char *arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
