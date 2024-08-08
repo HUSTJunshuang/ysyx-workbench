@@ -89,18 +89,24 @@ error:
 }
 
 static int cmd_x(char *args) {
-  int len;
   paddr_t addr;
+  int len;
   char *arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
   len = atoi(arg);
   arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
   sscanf(arg, "0x%x", &addr);
-  for (int i = 0; i < len; i++) {
-    // display mem value
-    uint32_t m = paddr_read(addr + i * 4, 4);
-    printf("0x%x <tag>:\t0x%08x\n", addr + i * 4, m);
+  // four word in a line
+  for (int i = 0; i < len; i += 4) {
+    printf("0x%x <tag>:", addr + i * 4);
+    for (int j = 0; j < 4; j++) {
+      int offset = i + j;
+      if (offset >= len) break;
+      uint32_t m = paddr_read(addr + offset * 4, 4);
+      printf("\t0x%08x", m);
+    }
+    printf("\n");
   }
   return 0;
 
