@@ -66,12 +66,15 @@ static int cmd_si(char *args) {
 
 static int cmd_info(char *args) {
   char *arg = strtok(NULL, " ");
-  if (*arg == 'r') {
+  if (strcmp(arg, "r") == 0) {
     isa_reg_display();
   }
-  else if (*arg == 'w') {
+  else if (strcmp(arg, "w") == 0) {
     // TODO print watchpoint
     printf("TBD\n");
+  }
+  else {
+    printf("Usage: 'info r'(show regs value) or 'info w'(show watchpoints)\n");
   }
   return 0;
 }
