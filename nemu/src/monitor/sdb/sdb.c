@@ -105,7 +105,7 @@ static int cmd_x(char *args) {
   return 0;
 
 error:
-  printf("Usage: 'x N ADDR', N refers to scan length, ADDR refers to the start address, which can be a expression.");
+  printf("Usage: 'x N ADDR', N refers to scan length, ADDR refers to the start address, which can be a expression.\n");
   return 0;
 }
 
