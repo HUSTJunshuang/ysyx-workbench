@@ -98,7 +98,8 @@ static int cmd_x(char *args) {
   // process address
   arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
-  sscanf(arg, "0x%x", &addr);
+  int ret = sscanf(arg, "0x%x", &addr);
+  if (ret == -1)  goto error;
   // four word in a line
   for (int i = 0; i < len; i += 4) {
     printf("0x%x <tag>:", addr + i * 4);
