@@ -95,8 +95,9 @@ static int cmd_x(char *args) {
   // process len
   char *arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
-  len = sscanf(arg, "%d", &len);
+  ret = sscanf(arg, "%d", &len);
   printf("ret = %d\n", ret);
+  if (ret == 0)  goto error;
   // process address
   arg = strtok(NULL, " ");
   if (arg == NULL)  goto error;
