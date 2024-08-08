@@ -135,11 +135,9 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-  { "si", "Single-step execution,\n\
-  Usage: 'si [N]', N(int) refers to execution times, with a default value 1.", cmd_si },
+  { "si", "Single-step execution,\n\tUsage: 'si [N]', N(int) refers to execution times, with a default value 1.", cmd_si },
   { "info", "Display information about regs('info r') or wathcpoints('info w')", cmd_info },
-  { "x", "Display memory content,\n\
-  Uasge: 'x N ADDR', N(int) refers to scan length, ADDR refers to the start address, which can be a expression.", cmd_x },
+  { "x", "Display memory content,\n\tUasge: 'x N ADDR', N(int) refers to scan length, ADDR refers to the start address, which can be a expression.", cmd_x },
   /* TODO: Add more commands */
 
 };
