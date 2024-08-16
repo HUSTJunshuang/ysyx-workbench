@@ -186,6 +186,7 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
+  Log("Total token number: %d", nr_token);
   for (int i = 0; i < nr_token; i++) {
     continue;
   }
