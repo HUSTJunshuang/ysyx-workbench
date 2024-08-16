@@ -143,7 +143,7 @@ word_t eval(int p, int q) {
     return eval(p + 1, q - 1);
   }
   else {
-    int op = -1;
+    int op = p;
     bool in_bracket = false, low_prioty = false;
     // find main op
     for (int i = p; i <= q; i++) {
