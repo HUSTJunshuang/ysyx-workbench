@@ -146,7 +146,7 @@ word_t eval(int p, int q) {
     int op = -1;
     bool in_bracket = false, low_prioty = false;
     // find main op
-    for (int i = p; i < q; i++) {
+    for (int i = p; i <= q; i++) {
       if (tokens[i].type == '(') {
         in_bracket = true;
         continue;
