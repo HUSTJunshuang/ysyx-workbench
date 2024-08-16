@@ -53,6 +53,53 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_si(char *args);
+static int cmd_info(char *args);
+static int cmd_x(char *args);
+static int cmd_p(char *args);
+static int cmd_help(char *args);
+
+static struct {
+  const char *name;
+  const char *description;
+  int (*handler) (char *);
+} cmd_table [] = {
+  { "help", "Display information about all supported commands", cmd_help },
+  { "c", "Continue the execution of the program", cmd_c },
+  { "q", "Exit NEMU", cmd_q },
+  { "si", "Single-step execution,\n\tUsage: 'si [N]', N(int) refers to execution times, with a default value 1.", cmd_si },
+  { "info", "Display information about regs('info r') or wathcpoints('info w')", cmd_info },
+  { "x", "Display memory content,\n\tUasge: 'x N ADDR', N(int) refers to scan length, ADDR refers to the start address, which can be a expression.", cmd_x },
+  { "p", "Calculate expressions.", cmd_p },
+  /* TODO: Add more commands */
+
+};
+
+#define NR_CMD ARRLEN(cmd_table)
+
+static int cmd_help(char *args) {
+  /* extract the first argument */
+  char *arg = strtok(NULL, " ");
+  int i;
+
+  if (arg == NULL) {
+    /* no argument given */
+    for (i = 0; i < NR_CMD; i ++) {
+      printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
+    }
+  }
+  else {
+    for (i = 0; i < NR_CMD; i ++) {
+      if (strcmp(arg, cmd_table[i].name) == 0) {
+        printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
+        return 0;
+      }
+    }
+    printf("Unknown command '%s'\n", arg);
+  }
+  return 0;
+}
+
 static int cmd_si(char *args) {
   char *arg = strtok(NULL, " ");
   if (arg == NULL) {
@@ -125,45 +172,9 @@ error:
   return 0;
 }
 
-static int cmd_help(char *args);
-
-static struct {
-  const char *name;
-  const char *description;
-  int (*handler) (char *);
-} cmd_table [] = {
-  { "help", "Display information about all supported commands", cmd_help },
-  { "c", "Continue the execution of the program", cmd_c },
-  { "q", "Exit NEMU", cmd_q },
-  { "si", "Single-step execution,\n\tUsage: 'si [N]', N(int) refers to execution times, with a default value 1.", cmd_si },
-  { "info", "Display information about regs('info r') or wathcpoints('info w')", cmd_info },
-  { "x", "Display memory content,\n\tUasge: 'x N ADDR', N(int) refers to scan length, ADDR refers to the start address, which can be a expression.", cmd_x },
-  /* TODO: Add more commands */
-
-};
-
-#define NR_CMD ARRLEN(cmd_table)
-
-static int cmd_help(char *args) {
-  /* extract the first argument */
-  char *arg = strtok(NULL, " ");
-  int i;
-
-  if (arg == NULL) {
-    /* no argument given */
-    for (i = 0; i < NR_CMD; i ++) {
-      printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
-    }
-  }
-  else {
-    for (i = 0; i < NR_CMD; i ++) {
-      if (strcmp(arg, cmd_table[i].name) == 0) {
-        printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
-        return 0;
-      }
-    }
-    printf("Unknown command '%s'\n", arg);
-  }
+static int cmd_p(char *args) {
+  bool success;
+  expr(args, &success);
   return 0;
 }
 
