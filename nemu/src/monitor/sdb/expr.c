@@ -126,6 +126,58 @@ static bool make_token(char *e) {
   return true;
 }
 
+static inline bool check_parentheses(int p, int q) {
+  return tokens[p].type == '(' && tokens[q].type == ')';
+}
+
+word_t eval(int p, int q) {
+  word_t result;
+  if (p > q) {}
+  else if (p == q) {
+    if (tokens[p].type != TK_DEC) {}
+    else {
+      sscanf(tokens[p].str, "%ld", &result);
+    }
+  }
+  else if (check_parentheses(p, q) == true) {
+    return eval(p + 1, q - 1);
+  }
+  else {
+    int op = -1;
+    bool in_bracket = false, low_prioty = false;
+    // find main op
+    for (int i = p; i < q; i++) {
+      if (tokens[i].type == '(') {
+        in_bracket = true;
+        continue;
+      }
+      else if (tokens[i].type == ')') {
+        in_bracket = false;
+        continue;
+      }
+      else if (!in_bracket) {
+        if ((tokens[i].type == '*' || tokens[i].type == '/') && !low_prioty) {
+          op = i;
+        }
+        else if ((tokens[i].type == '+' || tokens[i].type == '-')) {
+          op = i;
+          low_prioty = true;
+        }
+      }
+    }
+    // calculate each
+    word_t val1 = eval(p, op - 1);
+    word_t val2 = eval(op + 1, q);
+    switch (tokens[op].type) {
+      case '+': return val1 + val2;
+      case '-': return val1 - val2;
+      case '*': return val1 * val2;
+      case '/': return val1 / val2;
+      default: Assert(0, "Error operation type: %c", tokens[op].type);
+    }
+  }
+  return result;
+}
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -138,5 +190,5 @@ word_t expr(char *e, bool *success) {
     continue;
   }
 
-  return 0;
+  return eval(0, nr_token - 1);
 }
