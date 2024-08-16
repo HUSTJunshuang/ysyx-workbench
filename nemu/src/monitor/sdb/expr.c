@@ -37,13 +37,14 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
+  {"(-)?([1-9])([0-9])*", TK_DEC},
   {"\\+", '+'},         // plus
   {"-", '-'},           // minus
   {"\\*", '*'},         // multiply
   {"/", '/'},           // divide
   {"\\(", '('},         // left bracket
   {"\\)", ')'},         // right bracket
-  {"(-)?([1-9])([0-9])*", TK_DEC},
+  
   {"==", TK_EQ},        // equal
 };
 
