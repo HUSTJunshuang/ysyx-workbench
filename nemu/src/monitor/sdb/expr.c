@@ -132,7 +132,7 @@ static inline bool check_parentheses(int p, int q) {
 
 word_t eval(int p, int q) {
   word_t result;
-  if (p > q) {}
+  if (p > q)  return 0;
   else if (p == q) {
     if (tokens[p].type != TK_DEC) {}
     else {
