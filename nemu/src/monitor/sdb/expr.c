@@ -37,14 +37,13 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
-  {"([1-9])([0-9])*", TK_DEC},
   {"\\+", '+'},         // plus
   {"-", '-'},           // minus
   {"\\*", '*'},         // multiply
   {"/", '/'},           // divide
   {"\\(", '('},         // left bracket
   {"\\)", ')'},         // right bracket
-  
+  {"([1-9])([0-9])*", TK_DEC},
   {"==", TK_EQ},        // equal
 };
 
@@ -134,7 +133,7 @@ word_t eval(int p, int q) {
   word_t result;
   if (p > q)  return 0;
   else if (p == q) {
-    if (tokens[p].type != TK_DEC) {}
+    if (tokens[p].type != TK_DEC) return 0;
     else {
       sscanf(tokens[p].str, "%ld", &result);
     }
