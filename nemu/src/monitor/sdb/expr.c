@@ -165,10 +165,11 @@ word_t eval(int p, int q) {
         }
       }
     }
-    Log("Main op = %d(%c)", op, tokens[op].type);
+    
     // calculate each
     word_t val1 = eval(p, op - 1);
     word_t val2 = eval(op + 1, q);
+    Log("Main op = %d(%c), L = %ld, R = %ld", op, tokens[op].type, val1, val2);
     switch (tokens[op].type) {
       case '+': return val1 + val2;
       case '-': return val1 - val2;
