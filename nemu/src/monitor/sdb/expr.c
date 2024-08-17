@@ -230,8 +230,7 @@ inline int pr_lut(int c) {
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
-    *success = false;
-    return 0;
+    goto error;
   }
 
   /* TODO: Insert codes to evaluate the expression. */
@@ -251,9 +250,9 @@ word_t expr(char *e, bool *success) {
   if (bracket_r - bracket_l) {
     fprintf(stderr, "Brackets not match, with %d left brackets, %d right brackets\n", bracket_l, bracket_r);
     goto error;
-    // Assert(0, "Brackets not match, with %d left brackets, %d right brackets", bracket_l, bracket_r);
   }
 
+  // Calculate
   for (int i = 0; i < nr_token; i++) {
     if (tokens[i].type == TK_DEC) {
       num_stack[num_ptr++] = strtoul(tokens[i].str, NULL, 10);
@@ -279,7 +278,8 @@ word_t expr(char *e, bool *success) {
   }
 
   return num_stack[0];
+
 error:
   *success = false;
-  return -1;
+  return 0;
 }
