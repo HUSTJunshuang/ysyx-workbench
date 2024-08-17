@@ -199,6 +199,7 @@ static inline bool check_parentheses(int p, int q) {
 void eval() {
   if (op_stack[op_ptr].type == TK_NEG) {
     num_stack[num_ptr] = -num_stack[num_ptr];
+    op_ptr--;
   }
   else {
     word_t b = num_stack[num_ptr--];
@@ -253,6 +254,7 @@ word_t expr(char *e, bool *success) {
       while (op_stack[op_ptr].type != '(') {
         eval();
       }
+      op_ptr--;
     }
     else {
         while (op_ptr > 0 && pr_lut(op_stack[op_ptr].type) > pr_lut(tokens[i].type)) {
