@@ -123,7 +123,6 @@ static bool make_token(char *e) {
           case TK_DEC: tokens[nr_token].type = TK_DEC; strncpy(tokens[nr_token++].str, substr_start, substr_len); break;
           default: ;
         }
-        nr_token++;
         break;
       }
     }
