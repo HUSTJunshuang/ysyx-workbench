@@ -255,7 +255,7 @@ word_t expr(char *e, bool *success) {
       op_stack[op_ptr++].type = '(';
     }
     else if (tokens[i].type == ')') {
-      while (op_stack[op_ptr].type != '(') {
+      while (op_stack[op_ptr - 1].type != '(') {
         eval();
       }
       op_ptr--;
