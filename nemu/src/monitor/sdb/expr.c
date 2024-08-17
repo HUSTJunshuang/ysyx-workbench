@@ -250,6 +250,7 @@ word_t expr(char *e, bool *success) {
   printf("\n");
   if (bracket_r - bracket_l) {
     fprintf(stderr, "Brackets not match, with %d left brackets, %d right brackets\n", bracket_l, bracket_r);
+    goto error;
     // Assert(0, "Brackets not match, with %d left brackets, %d right brackets", bracket_l, bracket_r);
   }
 
@@ -278,4 +279,7 @@ word_t expr(char *e, bool *success) {
   }
 
   return num_stack[0];
+error:
+  *success = false;
+  return -1;
 }
