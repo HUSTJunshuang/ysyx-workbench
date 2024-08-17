@@ -239,14 +239,18 @@ word_t expr(char *e, bool *success) {
   // clear the pointer
   num_ptr = 0;
   op_ptr = 0;
-  // int bracket_l = 0, bracket_r = 0;
-  // for (int i = 0; i < nr_token; i++) {
-  //   if (tokens[i].type == '(')  bracket_l++;
-  //   if (tokens[i].type == ')')  bracket_r++;
-  // }
-  // if (bracket_r - bracket_l) {
-  //   Assert(0, "Brackets not match, with %d left brackets, %d right brackets", bracket_l, bracket_r);
-  // }
+  int bracket_l = 0, bracket_r = 0;
+  for (int i = 0; i < nr_token; i++) {
+    if (tokens[i].type == '(')  bracket_l++;
+    if (tokens[i].type == ')')  bracket_r++;
+    if (tokens[i].type == TK_NEG) printf("fu");
+    else if (tokens[i].type == TK_DEC) printf("%s", tokens[i].str);
+    else printf("%c", tokens[i].type);
+  }
+  printf("\n");
+  if (bracket_r - bracket_l) {
+    Assert(0, "Brackets not match, with %d left brackets, %d right brackets", bracket_l, bracket_r);
+  }
 
   for (int i = 0; i < nr_token; i++) {
     if (tokens[i].type == TK_DEC) {
