@@ -175,7 +175,7 @@ error:
 static int cmd_p(char *args) {
   bool success;
   word_t result = expr(args, &success);
-  printf("%ld\n", result);
+  if (success) printf("%ld\n", result);
   return 0;
 }
 
