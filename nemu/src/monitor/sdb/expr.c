@@ -268,7 +268,7 @@ word_t expr(char *e, bool *success) {
       op_ptr--;
     }
     else {
-        while (op_ptr > 0 && pr_lut(op_stack[op_ptr].type) > pr_lut(tokens[i].type)) {
+        while (op_ptr > 0 && pr_lut(op_stack[op_ptr - 1].type) > pr_lut(tokens[i].type)) {
           eval();
         }
         op_stack[op_ptr++].type = tokens[i].type;
