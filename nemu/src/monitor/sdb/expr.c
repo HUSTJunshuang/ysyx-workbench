@@ -199,21 +199,19 @@ void eval() {
   if (op_stack[op_ptr - 1].type == TK_NEG) {
     num_stack[num_ptr - 1] = -num_stack[num_ptr - 1];
     op_ptr--;
-    printf("a = -a = %ld\n", num_stack[num_ptr - 1]);
+    // printf("a = -a = %ld\n", num_stack[num_ptr - 1]);
   }
   else {
     word_t b = num_stack[--num_ptr];
     word_t a = num_stack[--num_ptr];
-    printf("num_ptr = %d\n", num_ptr);
     switch (op_stack[--op_ptr].type) {
       case '+': num_stack[num_ptr++] = a + b; break;
       case '-': num_stack[num_ptr++] = a - b; break;
       case '*': num_stack[num_ptr++] = a * b; break;
       case '/': num_stack[num_ptr++] = a / b; break;
     }
-    printf("a %c b = %ld %c %ld = %ld\n", op_stack[op_ptr].type, a, op_stack[op_ptr].type, b, num_stack[num_ptr-1]);
-    printf("num_ptr = %d\n", num_ptr);
-    if (num_ptr < 0) assert(0);
+    // printf("a %c b = %ld %c %ld = %ld\n", op_stack[op_ptr].type, a, op_stack[op_ptr].type, b, num_stack[num_ptr-1]);
+    // printf("num_ptr = %d\n", num_ptr);
   }
   return ;
 }
