@@ -21,8 +21,8 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,
-
+  TK_NOTYPE = 256, TK_EQ, TK_POS, TK_NEG,
+  TK_DEC,
   /* TODO: Add more token types */
 
 };
@@ -37,7 +37,14 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
+  {"([1-9])([0-9])*", TK_DEC},
   {"\\+", '+'},         // plus
+  {"-", '-'},           // minus
+  {"\\*", '*'},         // multiply
+  {"/", '/'},           // divide
+  {"\\(", '('},         // left bracket
+  {"\\)", ')'},         // right bracket
+  
   {"==", TK_EQ},        // equal
 };
 
@@ -68,6 +75,10 @@ typedef struct token {
 } Token;
 
 static Token tokens[32] __attribute__((used)) = {};
+static word_t num_stack[32] __attribute__((used)) = {};
+static Token op_stack[32] __attribute__((used)) = {};
+static int num_ptr __attribute__((used)) = 0;
+static int op_ptr __attribute__((used)) = 0;
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
@@ -95,9 +106,23 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
-          default: TODO();
+          case TK_NOTYPE: break;
+          case '+': tokens[nr_token++].type = '+'; break;
+          case '-': {
+            if (nr_token == 0 || (nr_token > 0 && ((tokens[nr_token - 1].type != ')') &&
+                (tokens[nr_token - 1].type != TK_DEC)))) {
+              tokens[nr_token++].type = TK_NEG;
+            }
+            else tokens[nr_token++].type = '-';
+            break;
+          }
+          case '*': tokens[nr_token++].type = '*'; break;
+          case '/': tokens[nr_token++].type = '/'; break;
+          case '(': tokens[nr_token++].type = '('; break;
+          case ')': tokens[nr_token++].type = ')'; break;
+          case TK_DEC: tokens[nr_token].type = TK_DEC; strncpy(tokens[nr_token++].str, substr_start, substr_len); break;
+          default: ;
         }
-
         break;
       }
     }
@@ -111,15 +136,150 @@ static bool make_token(char *e) {
   return true;
 }
 
+static inline bool check_parentheses(int p, int q) {
+  if (tokens[p].type != '(')  return false;
+  for (int i = p; i < q; i++) {
+    if (tokens[i].type == ')')  return false;
+  }
+  return tokens[q].type == ')';
+}
+
+// word_t eval(int p, int q) {
+//   word_t result;
+//   if (p > q)  return 0;
+//   else if (p == q) {
+//     if (tokens[p].type != TK_DEC) return 0;
+//     else {
+//       sscanf(tokens[p].str, "%ld", &result);
+//     }
+//   }
+//   else if (check_parentheses(p, q) == true) {
+//     return eval(p + 1, q - 1);
+//   }
+//   else {
+//     int op = p;
+//     int in_bracket = 0;
+//     bool low_prioty = false;
+//     // find main op
+//     for (int i = p; i <= q; i++) {
+//       if (tokens[i].type == '(') {
+//         in_bracket++;
+//         continue;
+//       }
+//       else if (tokens[i].type == ')') {
+//         in_bracket--;
+//         continue;
+//       }
+//       else if (!in_bracket) {
+//         if ((tokens[i].type == '*' || tokens[i].type == '/') && !low_prioty) {
+//           op = i;
+//         }
+//         else if ((tokens[i].type == '+' || tokens[i].type == '-')) {
+//           op = i;
+//           low_prioty = true;
+//         }
+//       }
+//     }
+//     // calculate each
+//     word_t val1 = eval(p, op - 1);
+//     word_t val2 = eval(op + 1, q);
+//     Log("Main op = %d(%c), L = %ld, R = %ld", op, tokens[op].type, val1, val2);
+//     switch (tokens[op].type) {
+//       case '+': return val1 + val2;
+//       case '-': return val1 - val2;
+//       case '*': return val1 * val2;
+//       case '/': return val1 / val2;
+//       default: Assert(0, "Error operation type: %c", tokens[op].type);
+//     }
+//   }
+//   return result;
+// }
+
+void eval() {
+  if (op_stack[op_ptr - 1].type == TK_NEG) {
+    num_stack[num_ptr - 1] = -num_stack[num_ptr - 1];
+    op_ptr--;
+    // printf("a = -a = %ld\n", num_stack[num_ptr - 1]);
+  }
+  else {
+    word_t b = num_stack[--num_ptr];
+    word_t a = num_stack[--num_ptr];
+    switch (op_stack[--op_ptr].type) {
+      case '+': num_stack[num_ptr++] = a + b; break;
+      case '-': num_stack[num_ptr++] = a - b; break;
+      case '*': num_stack[num_ptr++] = a * b; break;
+      case '/': num_stack[num_ptr++] = a / b; break;
+    }
+    // printf("a %c b = %ld %c %ld = %ld\n", op_stack[op_ptr].type, a, op_stack[op_ptr].type, b, num_stack[num_ptr-1]);
+    // printf("num_ptr = %d\n", num_ptr);
+  }
+  return ;
+}
+
+inline int pr_lut(int c) {
+  switch (c) {
+    case '+': return 1;
+    case '-': return 1;
+    case '*': return 2;
+    case '/': return 2;
+    case TK_NEG: return 3;
+    // case '(': return 16;
+  }
+  return 0;
+}
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
-    *success = false;
-    return 0;
+    goto error;
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+  Log("Total token number: %d", nr_token);
+  // clear the pointer
+  num_ptr = 0;
+  op_ptr = 0;
+  int bracket_l = 0, bracket_r = 0;
+  for (int i = 0; i < nr_token; i++) {
+    if (tokens[i].type == '(')  bracket_l++;
+    if (tokens[i].type == ')')  bracket_r++;
+    if (tokens[i].type == TK_NEG) printf("fu");
+    else if (tokens[i].type == TK_DEC) printf("%s", tokens[i].str);
+    else printf("%c", tokens[i].type);
+  }
+  printf("\n");
+  if (bracket_r - bracket_l) {
+    fprintf(stderr, "Brackets not match, with %d left brackets, %d right brackets\n", bracket_l, bracket_r);
+    goto error;
+  }
 
+  // Calculate
+  for (int i = 0; i < nr_token; i++) {
+    if (tokens[i].type == TK_DEC) {
+      num_stack[num_ptr++] = strtoul(tokens[i].str, NULL, 10);
+    }
+    else if (tokens[i].type == '(') {
+      op_stack[op_ptr++].type = '(';
+    }
+    else if (tokens[i].type == ')') {
+      while (op_stack[op_ptr - 1].type != '(') {
+        eval();
+      }
+      op_ptr--;
+    }
+    else {
+        while (op_ptr > 0 && pr_lut(op_stack[op_ptr - 1].type) > pr_lut(tokens[i].type)) {
+          eval();
+        }
+        op_stack[op_ptr++].type = tokens[i].type;
+    }
+  }
+  while (op_ptr > 0) {
+    eval();
+  }
+
+  return num_stack[0];
+
+error:
+  *success = false;
   return 0;
 }
