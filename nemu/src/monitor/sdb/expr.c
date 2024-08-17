@@ -264,5 +264,5 @@ word_t expr(char *e, bool *success) {
     }
   }
 
-  return 0;
+  return num_stack[0];
 }
