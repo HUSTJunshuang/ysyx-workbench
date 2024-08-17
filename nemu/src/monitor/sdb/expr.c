@@ -249,7 +249,8 @@ word_t expr(char *e, bool *success) {
   }
   printf("\n");
   if (bracket_r - bracket_l) {
-    Assert(0, "Brackets not match, with %d left brackets, %d right brackets", bracket_l, bracket_r);
+    fprintf(stderr, "Brackets not match, with %d left brackets, %d right brackets", bracket_l, bracket_r);
+    // Assert(0, "Brackets not match, with %d left brackets, %d right brackets", bracket_l, bracket_r);
   }
 
   for (int i = 0; i < nr_token; i++) {
