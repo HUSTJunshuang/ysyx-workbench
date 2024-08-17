@@ -261,6 +261,7 @@ word_t expr(char *e, bool *success) {
           eval();
         }
         op_stack[op_ptr++].type = tokens[i].type;
+        printf("Add %c, op_ptr = %d\n", tokens[i].type, op_ptr);
     }
   }
   while (op_ptr > 0) {
