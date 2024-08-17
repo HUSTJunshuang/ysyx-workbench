@@ -262,6 +262,7 @@ word_t expr(char *e, bool *success) {
     }
   }
   while (op_ptr > 0) {
+    printf("?\n");
     eval();
   }
 
