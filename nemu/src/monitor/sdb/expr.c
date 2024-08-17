@@ -235,6 +235,9 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   Log("Total token number: %d", nr_token);
+  // clear the pointer
+  num_ptr = 0;
+  op_ptr = 0;
   // int bracket_l = 0, bracket_r = 0;
   // for (int i = 0; i < nr_token; i++) {
   //   if (tokens[i].type == '(')  bracket_l++;
