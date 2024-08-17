@@ -197,7 +197,7 @@ static inline bool check_parentheses(int p, int q) {
 
 void eval() {
   if (op_stack[op_ptr-1].type == TK_NEG) {
-    num_stack[num_ptr] = -num_stack[num_ptr];
+    num_stack[num_ptr - 1] = -num_stack[num_ptr - 1];
     op_ptr--;
   }
   else {
@@ -263,7 +263,6 @@ word_t expr(char *e, bool *success) {
     }
   }
   while (op_ptr > 0) {
-    printf("op_ptr = %d?\n", op_ptr);
     eval();
   }
 
