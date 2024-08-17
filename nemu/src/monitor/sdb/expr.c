@@ -127,7 +127,11 @@ static bool make_token(char *e) {
 }
 
 static inline bool check_parentheses(int p, int q) {
-  return tokens[p].type == '(' && tokens[q].type == ')';
+  if (tokens[p].type != '(')  return false;
+  for (int i = p; i < q; i++) {
+    if (tokens[i].type == ')')  return false;
+  }
+  return tokens[q].type == ')';
 }
 
 word_t eval(int p, int q) {
@@ -144,15 +148,16 @@ word_t eval(int p, int q) {
   }
   else {
     int op = p;
-    bool in_bracket = false, low_prioty = false;
+    int in_bracket = 0;
+    bool low_prioty = false;
     // find main op
     for (int i = p; i <= q; i++) {
       if (tokens[i].type == '(') {
-        in_bracket = true;
+        in_bracket++;
         continue;
       }
       else if (tokens[i].type == ')') {
-        in_bracket = false;
+        in_bracket--;
         continue;
       }
       else if (!in_bracket) {
