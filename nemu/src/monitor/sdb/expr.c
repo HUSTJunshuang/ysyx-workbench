@@ -209,7 +209,7 @@ void eval() {
       case '*': num_stack[num_ptr++] = a * b;
       case '/': num_stack[num_ptr++] = a / b;
     }
-    printf("a %c b = %ld %c %ld = %ld\n", op_stack[op_ptr+1].type, a, op_stack[op_ptr+1].type, b, num_stack[num_ptr-1]);
+    printf("a %c b = %ld %c %ld = %ld\n", op_stack[op_ptr].type, a, op_stack[op_ptr].type, b, num_stack[num_ptr-1]);
   }
   return ;
 }
