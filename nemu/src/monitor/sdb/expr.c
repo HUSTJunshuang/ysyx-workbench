@@ -203,6 +203,7 @@ void eval() {
   else {
     word_t b = num_stack[--num_ptr];
     word_t a = num_stack[--num_ptr];
+    printf("num_ptr = %d\n", num_ptr);
     switch (op_stack[--op_ptr].type) {
       case '+': num_stack[num_ptr++] = a + b; break;
       case '-': num_stack[num_ptr++] = a - b; break;
