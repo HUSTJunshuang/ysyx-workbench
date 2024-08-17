@@ -225,6 +225,7 @@ inline int pr_lut(int c) {
     case '*': return 2;
     case '/': return 2;
     case TK_NEG: return 3;
+    case '(': return 16;
   }
   return 0;
 }
