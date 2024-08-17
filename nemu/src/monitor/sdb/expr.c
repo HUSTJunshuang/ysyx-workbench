@@ -196,14 +196,14 @@ static inline bool check_parentheses(int p, int q) {
 // }
 
 void eval() {
-  if (op_stack[op_ptr].type == TK_NEG) {
+  if (op_stack[op_ptr-1].type == TK_NEG) {
     num_stack[num_ptr] = -num_stack[num_ptr];
     op_ptr--;
   }
   else {
-    word_t b = num_stack[num_ptr--];
-    word_t a = num_stack[num_ptr--];
-    switch (op_stack[op_ptr--].type) {
+    word_t b = num_stack[--num_ptr];
+    word_t a = num_stack[--num_ptr];
+    switch (op_stack[--op_ptr].type) {
       case '+': num_stack[num_ptr++] = a + b;
       case '-': num_stack[num_ptr++] = a - b;
       case '*': num_stack[num_ptr++] = a * b;
@@ -260,7 +260,6 @@ word_t expr(char *e, bool *success) {
           eval();
         }
         op_stack[op_ptr++].type = tokens[i].type;
-        printf("Add %c, op_ptr = %d\n", tokens[i].type, op_ptr);
     }
   }
   while (op_ptr > 0) {
