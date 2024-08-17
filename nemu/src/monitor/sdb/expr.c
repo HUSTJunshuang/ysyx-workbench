@@ -233,14 +233,14 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   Log("Total token number: %d", nr_token);
-  int bracket_l = 0, bracket_r = 0;
-  for (int i = 0; i < nr_token; i++) {
-    if (tokens[i].type == '(')  bracket_l++;
-    if (tokens[i].type == ')')  bracket_r++;
-  }
-  if (bracket_r - bracket_l) {
-    Assert(0, "Brackets not match, with %d left brackets, %d right brackets", bracket_l, bracket_r);
-  }
+  // int bracket_l = 0, bracket_r = 0;
+  // for (int i = 0; i < nr_token; i++) {
+  //   if (tokens[i].type == '(')  bracket_l++;
+  //   if (tokens[i].type == ')')  bracket_r++;
+  // }
+  // if (bracket_r - bracket_l) {
+  //   Assert(0, "Brackets not match, with %d left brackets, %d right brackets", bracket_l, bracket_r);
+  // }
 
   for (int i = 0; i < nr_token; i++) {
     if (tokens[i].type == TK_DEC) {
@@ -260,9 +260,9 @@ word_t expr(char *e, bool *success) {
         }
         op_stack[op_ptr++].type = tokens[i].type;
     }
-    while (op_ptr > 0) {
-      eval();
-    }
+  }
+  while (op_ptr > 0) {
+    eval();
   }
 
   return num_stack[0];
