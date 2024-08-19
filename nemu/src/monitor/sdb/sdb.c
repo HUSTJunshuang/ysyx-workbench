@@ -60,7 +60,7 @@ int extract_args(char *args, char **argv[]) {
   char tmp[512];
   for (int i = 0; i < argc; i ++) {
     sscanf(buf, "%s", tmp);
-    *argv[i] = strdup(tmp);
+    (*argv)[i] = strdup(tmp);
     printf("argv[%d] dumped successfully\n", i);
   }
   free(buf);
