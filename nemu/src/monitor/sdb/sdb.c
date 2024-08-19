@@ -48,12 +48,19 @@ static char* rl_gets() {
 int extract_args(char *args, char **argv[]) {
   int argc = 0;
   char *arg = NULL;
-  // char *buf = strdup(args);
+  char *buf = strdup(args);
   // count arg number
   while ((arg = strtok(NULL, " ")) != NULL) {
     argc++;
   }
-  printf("There are total %d args\n", argc);
+  // extract args
+  *argv = (char**)malloc(sizeof(char*) * argc);
+  char tmp[512];
+  for (int i = 0; i < argc; i ++) {
+    sscanf(buf, "%s", tmp);
+    *argv[i] = strdup(tmp);
+  }
+  free(buf);
 
   return argc;
 }
@@ -98,7 +105,13 @@ static int cmd_help(char *args) {
   int i;
 
   char **argv;
-  extract_args(args, &argv);
+  int argc = extract_args(args, &argv);
+  printf("There are total %d args\n", argc);
+  for (int i = 0; i < argc; i++) {
+    printf("argv[%d] = %s\n", i, argv[i]);
+    free(argv[i]);
+  }
+  free(argv);
 
   if (arg == NULL) {
     /* no argument given */
