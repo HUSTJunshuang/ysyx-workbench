@@ -54,7 +54,7 @@ int extract_args(char *args, char **argv[]) {
     argc++;
   }
   // extract args
-  *argv = (char **)malloc(sizeof(char *) * (argc + 1));
+  *argv = (char **)malloc(sizeof(char *) * argc);
   if (*argv == NULL) printf("malloc failed\n");
   for (int i = 0; i < argc; i++) printf("Address of argv[%d]: %p\n", i, &argv[i]);
   char tmp[512];
