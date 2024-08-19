@@ -54,7 +54,7 @@ int extract_args(char *args, char **argv[]) {
     argc++;
   }
   // extract args
-  *argv = (char**)malloc(sizeof(char*) * argc);
+  *argv = (char **)malloc(sizeof(char *) * argc);
   char tmp[512];
   for (int i = 0; i < argc; i ++) {
     sscanf(buf, "%s", tmp);
