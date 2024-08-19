@@ -43,6 +43,21 @@ static char* rl_gets() {
   return line_read;
 }
 
+/* Extract the args to argv likes the main func, return the arg count */
+/* remember to free the argv */
+// int extract_args(char *args, char **argv[]) {
+//   int argc = 0;
+//   char *arg = NULL;
+//   char *buf = strdup(args);
+//   // count arg number
+//   while ((arg = strtok(NULL, " ")) != NULL) {
+//     argc++;
+//   }
+//   printf("There are total %d args\n", argc);
+
+//   return argc;
+// }
+
 static int cmd_c(char *args) {
   cpu_exec(-1);
   return 0;
