@@ -48,6 +48,7 @@ static char* rl_gets() {
 int extract_args(char *args, char ***argv) {
   int argc = 0;
   char *arg = strtok(args, " ");
+  printf("args = %s\n", args);
   // char *buf = strdup(args);
   // count arg number
   while (arg != NULL) {
