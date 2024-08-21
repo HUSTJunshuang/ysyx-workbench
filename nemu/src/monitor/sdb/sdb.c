@@ -245,7 +245,6 @@ void sdb_mainloop() {
     }
 
     if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
-    free(str);
   }
 }
 
