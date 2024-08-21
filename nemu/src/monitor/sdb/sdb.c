@@ -45,18 +45,18 @@ static char* rl_gets() {
 
 /* Extract the args to argv likes the main func, return the arg count */
 /* remember to free the argv */
-// int extract_args(char *args, char ***argv) {
-//   int argc = 0;
-//   // extract args
-//   char *arg = strtok(args, " ");
-//   while (arg != NULL) {
-//     *argv = realloc(*argv, sizeof(char*) * (argc + 1));
-//     (*argv)[argc++] = strdup(arg);
-//     arg = strtok(NULL, " ");
-//   }
+int extract_args(char *args, char ***argv) {
+  int argc = 0;
+  // extract args
+  char *arg = strtok(args, " ");
+  while (arg != NULL) {
+    *argv = realloc(*argv, sizeof(char*) * (argc + 1));
+    (*argv)[argc++] = strdup(arg);
+    arg = strtok(NULL, " ");
+  }
 
-//   return argc;
-// }
+  return argc;
+}
 
 static int cmd_c(char *args) {
   cpu_exec(-1);
@@ -99,14 +99,14 @@ static int cmd_help(char *args) {
   char *arg = NULL;
   int i;
 
-  // char **argv = NULL;
-  // int argc = extract_args(args, &argv);
-  // printf("There are total %d args\n", argc);
-  // for (int i = 0; i < argc; i++) {
-  //   printf("argv[%d] = %s\n", i, argv[i]);
-  //   free(argv[i]);
-  // }
-  // free(argv);
+  char **argv = NULL;
+  int argc = extract_args(args, &argv);
+  printf("There are total %d args\n", argc);
+  for (int i = 0; i < argc; i++) {
+    printf("argv[%d] = %s\n", i, argv[i]);
+    free(argv[i]);
+  }
+  free(argv);
 
   if (arg == NULL) {
     /* no argument given */
