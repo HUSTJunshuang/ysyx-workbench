@@ -44,10 +44,9 @@ static char* rl_gets() {
 }
 
 /* Extract the args to argv likes the main func, return the arg count */
-/* remember to free the argv */
+/* The argv should be NULL before call, and remember to free the argv */
 int extract_args(char *args, char ***argv) {
   int argc = 0;
-  // extract args
   char *arg = strtok(args, " ");
   while (arg != NULL) {
     *argv = realloc(*argv, sizeof(char*) * (argc + 1));
