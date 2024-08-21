@@ -47,8 +47,8 @@ static char* rl_gets() {
 /* remember to free the argv */
 int extract_args(char *args, char ***argv) {
   int argc = 0;
-  char *arg = strtok(args, " ");
   printf("args = %s\n", args);
+  char *arg = strtok(args, " ");
   // char *buf = strdup(args);
   // count arg number
   while (arg != NULL) {
@@ -239,7 +239,7 @@ void sdb_mainloop() {
      * which may need further parsing
      */
     char *args = cmd + strlen(cmd) + 1;
-    printf("args in sdb_mainloop = %s", args);
+    printf("args in sdb_mainloop = %s\n", args);
     if (args >= str_end) {
       args = NULL;
     }
