@@ -93,18 +93,8 @@ static struct {
 
 static int cmd_help(char *args) {
   /* extract the first argument */
-  // char *arg = strtok(NULL, " ");
-  char *arg = NULL;
+  char *arg = strtok(NULL, " ");
   int i;
-
-  char **argv = NULL;
-  int argc = extract_args(args, &argv);
-  printf("There are total %d args\n", argc);
-  for (int i = 0; i < argc; i++) {
-    printf("argv[%d] = %s\n", i, argv[i]);
-    free(argv[i]);
-  }
-  free(argv);
 
   if (arg == NULL) {
     /* no argument given */
