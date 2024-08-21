@@ -45,31 +45,18 @@ static char* rl_gets() {
 
 /* Extract the args to argv likes the main func, return the arg count */
 /* remember to free the argv */
-int extract_args(char *args, char ***argv) {
-  int argc = 0;
-  printf("args = %s\n", args);
-  char *arg = strtok(args, " ");
-  // char *buf = strdup(args);
-  // count arg number
-  while (arg != NULL) {
-    *argv = realloc(*argv, sizeof(char*) * (argc + 1));
-    (*argv)[argc++] = strdup(arg);
-    arg = strtok(NULL, " ");
-  }
-  // extract args
-  // *argv = (char **)malloc(sizeof(char *) * argc);
-  // if (*argv == NULL) printf("malloc failed\n");
-  // for (int i = 0; i < argc; i++) printf("Address of argv[%d]: %p\n", i, &argv[i]);
-  // char tmp[512];
-  // for (int i = 0; i < argc; i ++) {
-  //   sscanf(buf, "%s", tmp);
-  //   (*argv)[i] = strdup(tmp);
-  //   printf("argv[%d] dumped successfully\n", i);
-  // }
-  // free(buf);
+// int extract_args(char *args, char ***argv) {
+//   int argc = 0;
+//   // extract args
+//   char *arg = strtok(args, " ");
+//   while (arg != NULL) {
+//     *argv = realloc(*argv, sizeof(char*) * (argc + 1));
+//     (*argv)[argc++] = strdup(arg);
+//     arg = strtok(NULL, " ");
+//   }
 
-  return argc;
-}
+//   return argc;
+// }
 
 static int cmd_c(char *args) {
   cpu_exec(-1);
@@ -112,14 +99,14 @@ static int cmd_help(char *args) {
   char *arg = NULL;
   int i;
 
-  char **argv = NULL;
-  int argc = extract_args(args, &argv);
-  printf("There are total %d args\n", argc);
-  for (int i = 0; i < argc; i++) {
-    printf("argv[%d] = %s\n", i, argv[i]);
-    free(argv[i]);
-  }
-  free(argv);
+  // char **argv = NULL;
+  // int argc = extract_args(args, &argv);
+  // printf("There are total %d args\n", argc);
+  // for (int i = 0; i < argc; i++) {
+  //   printf("argv[%d] = %s\n", i, argv[i]);
+  //   free(argv[i]);
+  // }
+  // free(argv);
 
   if (arg == NULL) {
     /* no argument given */
