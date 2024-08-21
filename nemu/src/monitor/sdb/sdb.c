@@ -57,16 +57,8 @@ int extract_args(char *args, char ***argv) {
   return argc;
 }
 
-static int cmd_c(char *args) {
-  cpu_exec(-1);
-  return 0;
-}
-
-
-static int cmd_q(char *args) {
-  return -1;
-}
-
+static int cmd_c(char *args);
+static int cmd_q(char *args);
 static int cmd_si(char *args);
 static int cmd_info(char *args);
 static int cmd_x(char *args);
@@ -90,6 +82,70 @@ static struct {
 };
 
 #define NR_CMD ARRLEN(cmd_table)
+
+void sdb_set_batch_mode() {
+  is_batch_mode = true;
+}
+
+void sdb_mainloop() {
+  if (is_batch_mode) {
+    cmd_c(NULL);
+    return;
+  }
+
+  for (char *str; (str = rl_gets()) != NULL; ) {
+    char *str_end = str + strlen(str);
+
+    // BUG can't handle extra parameter like GDB dose
+    // for example, won't throw error when get 'help c d e f g'
+    /* extract the first token as the command */
+    char *cmd = strtok(str, " ");
+    if (cmd == NULL) { continue; }
+
+    /* treat the remaining string as the arguments,
+     * which may need further parsing
+     */
+    char *args = cmd + strlen(cmd) + 1;
+    if (args >= str_end) {
+      args = NULL;
+    }
+
+#ifdef CONFIG_DEVICE
+    extern void sdl_clear_event_queue();
+    sdl_clear_event_queue();
+#endif
+
+    int i;
+    for (i = 0; i < NR_CMD; i ++) {
+      if (strcmp(cmd, cmd_table[i].name) == 0) {
+        if (cmd_table[i].handler(args) < 0) { return; }
+        break;
+      }
+    }
+
+    if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
+  }
+}
+
+void init_sdb() {
+  /* Compile the regular expressions. */
+  init_regex();
+
+  /* Initialize the watchpoint pool. */
+  init_wp_pool();
+}
+
+
+
+/* Function Implementations */
+static int cmd_c(char *args) {
+  cpu_exec(-1);
+  return 0;
+}
+
+static int cmd_q(char *args) {
+  return -1;
+}
 
 static int cmd_help(char *args) {
   /* extract the first argument */
@@ -191,56 +247,4 @@ static int cmd_p(char *args) {
   word_t result = expr(args, &success);
   if (success) printf("%ld\n", result);
   return 0;
-}
-
-void sdb_set_batch_mode() {
-  is_batch_mode = true;
-}
-
-void sdb_mainloop() {
-  if (is_batch_mode) {
-    cmd_c(NULL);
-    return;
-  }
-
-  for (char *str; (str = rl_gets()) != NULL; ) {
-    char *str_end = str + strlen(str);
-
-    // BUG can't handle extra parameter like GDB dose
-    // for example, won't throw error when get 'help c d e f g'
-    /* extract the first token as the command */
-    char *cmd = strtok(str, " ");
-    if (cmd == NULL) { continue; }
-
-    /* treat the remaining string as the arguments,
-     * which may need further parsing
-     */
-    char *args = cmd + strlen(cmd) + 1;
-    if (args >= str_end) {
-      args = NULL;
-    }
-
-#ifdef CONFIG_DEVICE
-    extern void sdl_clear_event_queue();
-    sdl_clear_event_queue();
-#endif
-
-    int i;
-    for (i = 0; i < NR_CMD; i ++) {
-      if (strcmp(cmd, cmd_table[i].name) == 0) {
-        if (cmd_table[i].handler(args) < 0) { return; }
-        break;
-      }
-    }
-
-    if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
-  }
-}
-
-void init_sdb() {
-  /* Compile the regular expressions. */
-  init_regex();
-
-  /* Initialize the watchpoint pool. */
-  init_wp_pool();
 }
