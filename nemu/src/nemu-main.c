@@ -67,7 +67,7 @@ void p_test() {
     result = expr(e, &success);
     if (success) {
       if (result != answer) {
-        printf("Expr %s get %ld, instead of %ld\n", raw_expr, result, answer);
+        printf("Expr %s get %lu, instead of %lu\n", raw_expr, result, answer);
         if (err_cnt++ > 10) return ;
       }
     }
