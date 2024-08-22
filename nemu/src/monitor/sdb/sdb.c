@@ -53,7 +53,6 @@ int extract_args(char *args, char ***argv) {
     (*argv)[argc++] = strdup(arg);
     arg = strtok(NULL, " ");
   }
-
   return argc;
 }
 
@@ -75,7 +74,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
   { "si", "Single-step execution,\n\tUsage: 'si [N]', N(int) refers to execution times, with a default value 1.", cmd_si },
   { "info", "Display information about regs('info r') or wathcpoints('info w')", cmd_info },
-  { "x", "Display memory content,\n\tUasge: 'x N ADDR', N(int) refers to scan length, ADDR refers to the start address, which can be a expression.", cmd_x },
+  { "x", "Display memory content,\n\tUasge: 'x [N] ADDR', N(int) refers to scan length with a default value 1, ADDR refers to the start address, which can be a expression.", cmd_x },
   { "p", "Calculate expressions.", cmd_p },
   /* TODO: Add more commands */
 
@@ -224,39 +223,72 @@ error:
 }
 
 static int cmd_x(char *args) {
-  paddr_t addr;
-  int len;
-  int ret;
-  char extra[512] = "";
-  // process len
-  char *arg = strtok(NULL, " ");
-  if (arg == NULL)  goto error;
-  ret = sscanf(arg, "%d%s", &len, extra);
-  printf("ret = %d\n", ret);
-  printf("extra = %s\n", extra);
-  if (ret != 1)  goto error;
-  // process address
-  arg = strtok(NULL, " ");
-  if (arg == NULL)  goto error;
-  ret = sscanf(arg, "0x%x %s", &addr, extra);
-  printf("ret = %d\n", ret);
-  printf("extra = %s\n", extra);
-  if (ret != 1)  goto error;
+  char **argv;
+  int argc = extract_args(args, &argv);
+  if (argc == 0) {
+    goto error;
+  }
+
+  paddr_t addr = 0;
+  int N = 1;
+  char *end_ptr = NULL;
+  if (argc == 1) {
+    // scan one word pointed by ADDR
+    addr = strtoul(argv[0], &end_ptr, 0);
+    if (argv[0] + strlen(argv[0]) != end_ptr) {
+      printf("Address (%s) not valid, please input a integer.\n", argv[0]);
+      goto error;
+    }
+  }
+  else if (argc == 2) {
+    // scan N words pointed by ADDR
+    N = strtoul(argv[0], &end_ptr, 0);
+    if (argv[0] + strlen(argv[0]) != end_ptr) {
+      printf("N (%s) not valid,please input a integer.\n", argv[0]);
+      goto error;
+    }
+    end_ptr = NULL;
+    addr = strtoul(argv[1], &end_ptr, 0);
+    if (argv[1] + strlen(argv[1]) != end_ptr) {
+      printf("Address (%s) not valid, please input a integer.\n", argv[1]);
+      goto error;
+    }
+  }
+  else {
+    printf("Too many arguments.\n");
+    goto error;
+  }
+  // int ret;
+  // char extra[512] = "";
+  // // process len
+  // char *arg = strtok(NULL, " ");
+  // if (arg == NULL)  goto error;
+  // ret = sscanf(arg, "%d%s", &len, extra);
+  // printf("ret = %d\n", ret);
+  // printf("extra = %s\n", extra);
+  // if (ret != 1)  goto error;
+  // // process address
+  // arg = strtok(NULL, " ");
+  // if (arg == NULL)  goto error;
+  // ret = sscanf(arg, "0x%x %s", &addr, extra);
+  // printf("ret = %d\n", ret);
+  // printf("extra = %s\n", extra);
+  // if (ret != 1)  goto error;
   // four word in a line
-  for (int i = 0; i < len; i += 4) {
+  for (int i = 0; i < N; i += 4) {
     printf("0x%x <tag>:", addr + i * 4);
     for (int j = 0; j < 4; j++) {
       int offset = i + j;
-      if (offset >= len) break;
-      uint32_t m = paddr_read(addr + offset * 4, 4);
-      printf("\t0x%08x", m);
+      if (offset >= N) break;
+      uint32_t mem = paddr_read(addr + offset * 4, 4);
+      printf("\t0x%08x", mem);
     }
     printf("\n");
   }
   return 0;
 
 error:
-  printf("Usage: 'x N ADDR', N(int) refers to scan length, ADDR refers to the start address, which can be a expression.\n");
+  printf("Usage: 'x [N] ADDR', N(int) refers to scan length with a default value 1, ADDR refers to the start address, which can be a expression.\n");
   return 0;
 }
 
