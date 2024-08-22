@@ -208,7 +208,10 @@ void eval() {
       case '+': num_stack[num_ptr++] = a + b; break;
       case '-': num_stack[num_ptr++] = a - b; break;
       case '*': num_stack[num_ptr++] = a * b; break;
-      case '/': num_stack[num_ptr++] = a / b; break;
+      case '/': {
+        Assert(b != 0, "Error: %ld is divided by 0.", a);
+        num_stack[num_ptr++] = a / b; break;
+      }
     }
     // printf("a %c b = %ld %c %ld = %ld\n", op_stack[op_ptr].type, a, op_stack[op_ptr].type, b, num_stack[num_ptr-1]);
     // printf("num_ptr = %d\n", num_ptr);
