@@ -95,9 +95,6 @@ void sdb_mainloop() {
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
 
-    // BUG can't handle extra parameter like GDB dose
-    // for example, won't throw error when get 'help c d e f g'
-    /* extract the first token as the command */
     char *cmd = strtok(str, " ");
     if (cmd == NULL) { continue; }
 
