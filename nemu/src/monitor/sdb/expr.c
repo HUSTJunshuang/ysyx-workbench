@@ -104,7 +104,8 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-
+        // use dup to avoid the bug caused by that string in tokens copied by strncpy have no '\0'
+        char *match = strndup(substr_start, substr_len);
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
           case '+': tokens[nr_token++].type = '+'; break;
@@ -120,9 +121,11 @@ static bool make_token(char *e) {
           case '/': tokens[nr_token++].type = '/'; break;
           case '(': tokens[nr_token++].type = '('; break;
           case ')': tokens[nr_token++].type = ')'; break;
-          case TK_DEC: tokens[nr_token].type = TK_DEC; strncpy(tokens[nr_token++].str, substr_start, substr_len); break;
+          // case TK_DEC: tokens[nr_token].type = TK_DEC; strncpy(tokens[nr_token++].str, substr_start, substr_len); break;
+          case TK_DEC: tokens[nr_token].type = TK_DEC; strcpy(tokens[nr_token++].str, match); break;
           default: ;
         }
+        free(match);
         break;
       }
     }
