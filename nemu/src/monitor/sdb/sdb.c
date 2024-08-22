@@ -185,7 +185,7 @@ static int cmd_si(char *args) {
       goto error;
     }
     else {
-      Log("Step size = %ld", step);
+      Log("Step size = %lu", step);
       cpu_exec(step);
     }
   }
