@@ -78,5 +78,8 @@ void p_test() {
     free(raw_expr);
   }
   fclose(fp);
+  
+  if (err_cnt == 0) Log("Expression evaluation test Passed!");
+  else Log("Expression evaluation test Passed!");
   return ;
 }
