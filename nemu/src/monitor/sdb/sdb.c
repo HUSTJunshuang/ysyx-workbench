@@ -200,14 +200,16 @@ error:
 }
 
 static int cmd_info(char *args) {
-  char *arg = strtok(NULL, " ");
-  if (arg == NULL) {
+  char **argv = NULL;
+  int argc = extract_args(args, &argv);
+
+  if (argc != 1) {
     goto error;
   }
-  if (strcmp(arg, "r") == 0) {
+  if (strcmp(argv[0], "r") == 0) {
     isa_reg_display();
   }
-  else if (strcmp(arg, "w") == 0) {
+  else if (strcmp(argv[0], "w") == 0) {
     // TODO print watchpoint
     printf("TBD\n");
   }
