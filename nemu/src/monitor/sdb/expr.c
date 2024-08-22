@@ -120,7 +120,7 @@ static bool make_token(char *e) {
           case '/': tokens[nr_token++].type = '/'; break;
           case '(': tokens[nr_token++].type = '('; break;
           case ')': tokens[nr_token++].type = ')'; break;
-          case TK_DEC: tokens[nr_token].type = TK_DEC; strncpy(tokens[nr_token++].str, substr_start, substr_len); break;
+          case TK_DEC: tokens[nr_token].type = TK_DEC; strncpy(tokens[nr_token++].str, substr_start, substr_len - 1); break;
           default: ;
         }
         break;
