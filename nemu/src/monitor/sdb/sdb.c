@@ -43,16 +43,27 @@ static char* rl_gets() {
   return line_read;
 }
 
-static int cmd_c(char *args) {
-  cpu_exec(-1);
-  return 0;
+/* Extract the args to argv likes the main func, return the arg count */
+/* The argv should be NULL before call, and remember to free the argv */
+int extract_args(char *args, char ***argv) {
+  int argc = 0;
+  char *arg = strtok(args, " ");
+  while (arg != NULL) {
+    *argv = realloc(*argv, sizeof(char*) * (argc + 1));
+    (*argv)[argc++] = strdup(arg);
+    arg = strtok(NULL, " ");
+  }
+  return argc;
+}
+void release_argv(int argc, char **argv) {
+  for (int i = 0; i < argc; i++) {
+    free(argv[i]);
+  }
+  free(argv);
 }
 
-
-static int cmd_q(char *args) {
-  return -1;
-}
-
+static int cmd_c(char *args);
+static int cmd_q(char *args);
 static int cmd_si(char *args);
 static int cmd_info(char *args);
 static int cmd_x(char *args);
@@ -69,115 +80,13 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
   { "si", "Single-step execution,\n\tUsage: 'si [N]', N(int) refers to execution times, with a default value 1.", cmd_si },
   { "info", "Display information about regs('info r') or wathcpoints('info w')", cmd_info },
-  { "x", "Display memory content,\n\tUasge: 'x N ADDR', N(int) refers to scan length, ADDR refers to the start address, which can be a expression.", cmd_x },
+  { "x", "Display memory content,\n\tUasge: 'x [N] ADDR', N(int) refers to scan length with a default value 1, ADDR refers to the start address, which can be a expression.", cmd_x },
   { "p", "Calculate expressions.", cmd_p },
   /* TODO: Add more commands */
 
 };
 
 #define NR_CMD ARRLEN(cmd_table)
-
-static int cmd_help(char *args) {
-  /* extract the first argument */
-  char *arg = strtok(NULL, " ");
-  int i;
-
-  if (arg == NULL) {
-    /* no argument given */
-    for (i = 0; i < NR_CMD; i ++) {
-      printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
-    }
-  }
-  else {
-    for (i = 0; i < NR_CMD; i ++) {
-      if (strcmp(arg, cmd_table[i].name) == 0) {
-        printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
-        return 0;
-      }
-    }
-    printf("Unknown command '%s'\n", arg);
-  }
-  return 0;
-}
-
-static int cmd_si(char *args) {
-  char *arg = strtok(NULL, " ");
-  if (arg == NULL) {
-    cpu_exec(1);
-  }
-  else {
-    // TODO si x
-    int step = atoi(arg);
-    cpu_exec(step);
-  }
-  return 0;
-}
-
-static int cmd_info(char *args) {
-  char *arg = strtok(NULL, " ");
-  if (arg == NULL) {
-    goto error;
-  }
-  if (strcmp(arg, "r") == 0) {
-    isa_reg_display();
-  }
-  else if (strcmp(arg, "w") == 0) {
-    // TODO print watchpoint
-    printf("TBD\n");
-  }
-  else {
-    goto error;
-  }
-  return 0;
-
-error:
-  printf("Usage: 'info r'(show regs value) or 'info w'(show watchpoints)\n");
-  return 0;
-}
-
-static int cmd_x(char *args) {
-  paddr_t addr;
-  int len;
-  int ret;
-  char extra[512] = "";
-  // process len
-  char *arg = strtok(NULL, " ");
-  if (arg == NULL)  goto error;
-  ret = sscanf(arg, "%d%s", &len, extra);
-  printf("ret = %d\n", ret);
-  printf("extra = %s\n", extra);
-  if (ret != 1)  goto error;
-  // process address
-  arg = strtok(NULL, " ");
-  if (arg == NULL)  goto error;
-  ret = sscanf(arg, "0x%x %s", &addr, extra);
-  printf("ret = %d\n", ret);
-  printf("extra = %s\n", extra);
-  if (ret != 1)  goto error;
-  // four word in a line
-  for (int i = 0; i < len; i += 4) {
-    printf("0x%x <tag>:", addr + i * 4);
-    for (int j = 0; j < 4; j++) {
-      int offset = i + j;
-      if (offset >= len) break;
-      uint32_t m = paddr_read(addr + offset * 4, 4);
-      printf("\t0x%08x", m);
-    }
-    printf("\n");
-  }
-  return 0;
-
-error:
-  printf("Usage: 'x N ADDR', N(int) refers to scan length, ADDR refers to the start address, which can be a expression.\n");
-  return 0;
-}
-
-static int cmd_p(char *args) {
-  bool success = true;
-  word_t result = expr(args, &success);
-  if (success) printf("%ld\n", result);
-  return 0;
-}
 
 void sdb_set_batch_mode() {
   is_batch_mode = true;
@@ -192,9 +101,6 @@ void sdb_mainloop() {
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
 
-    // BUG can't handle extra parameter like GDB dose
-    // for example, won't throw error when get 'help c d e f g'
-    /* extract the first token as the command */
     char *cmd = strtok(str, " ");
     if (cmd == NULL) { continue; }
 
@@ -229,4 +135,159 @@ void init_sdb() {
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
+}
+
+
+
+/* Function Implementations */
+static int cmd_c(char *args) {
+  cpu_exec(-1);
+  return 0;
+}
+
+static int cmd_q(char *args) {
+  return -1;
+}
+
+static int cmd_help(char *args) {
+  /* extract the first argument */
+  char *arg = strtok(NULL, " ");
+  int i;
+
+  if (arg == NULL) {
+    /* no argument given */
+    for (i = 0; i < NR_CMD; i ++) {
+      printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
+    }
+  }
+  else {
+    for (i = 0; i < NR_CMD; i ++) {
+      if (strcmp(arg, cmd_table[i].name) == 0) {
+        printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
+        return 0;
+      }
+    }
+    printf("Unknown command '%s'\n", arg);
+  }
+  return 0;
+}
+
+static int cmd_si(char *args) {
+  char **argv = NULL;
+  int argc = extract_args(args, &argv);
+
+  if (argc == 0) {
+    cpu_exec(1);
+  }
+  else if (argc == 1) {
+    char *end_ptr = NULL;
+    uint64_t step = strtoul(argv[0], &end_ptr, 0);
+    if (argv[0] + strlen(argv[0]) != end_ptr) {
+      printf("Step size (%s) not valid, please input a integer.\n", argv[0]);
+      goto error;
+    }
+    else {
+      cpu_exec(step);
+    }
+  }
+  else {
+    printf("Too many arguments.\n");
+    goto error;
+  }
+  release_argv(argc, argv);
+  return 0;
+
+error:
+  release_argv(argc, argv);
+  printf("Usage: 'si [N]', N(int) refers to execution times, with a default value 1.\n");
+  return 0;
+}
+
+static int cmd_info(char *args) {
+  char **argv = NULL;
+  int argc = extract_args(args, &argv);
+
+  if (argc != 1) {
+    goto error;
+  }
+  if (strcmp(argv[0], "r") == 0) {
+    isa_reg_display();
+  }
+  else if (strcmp(argv[0], "w") == 0) {
+    // TODO print watchpoint
+    printf("TBD\n");
+  }
+  else {
+    goto error;
+  }
+  release_argv(argc, argv);
+  return 0;
+
+error:
+  release_argv(argc, argv);
+  printf("Usage: 'info r'(show regs value) or 'info w'(show watchpoints).\n");
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  char **argv = NULL;
+  int argc = extract_args(args, &argv);
+  if (argc == 0) {
+    goto error;
+  }
+
+  paddr_t addr = 0;
+  int N = 1;
+  char *end_ptr = NULL;
+  if (argc == 1) {
+    // scan one word pointed by ADDR
+    addr = strtoul(argv[0], &end_ptr, 0);
+    if (argv[0] + strlen(argv[0]) != end_ptr) {
+      printf("Address (%s) not valid, please input a integer.\n", argv[0]);
+      goto error;
+    }
+  }
+  else if (argc == 2) {
+    // scan N words pointed by ADDR
+    N = strtoul(argv[0], &end_ptr, 0);
+    if (argv[0] + strlen(argv[0]) != end_ptr) {
+      printf("N (%s) not valid, please input a integer.\n", argv[0]);
+      goto error;
+    }
+    end_ptr = NULL;
+    addr = strtoul(argv[1], &end_ptr, 0);
+    if (argv[1] + strlen(argv[1]) != end_ptr) {
+      printf("Address (%s) not valid, please input a integer.\n", argv[1]);
+      goto error;
+    }
+  }
+  else {
+    printf("Too many arguments.\n");
+    goto error;
+  }
+  // four words in a line
+  for (int i = 0; i < N; i += 4) {
+    printf("0x%x <tag>:", addr + i * 4);
+    for (int j = 0; j < 4; j++) {
+      int offset = i + j;
+      if (offset >= N) break;
+      uint32_t mem = paddr_read(addr + offset * 4, 4);
+      printf("\t0x%08x", mem);
+    }
+    printf("\n");
+  }
+  release_argv(argc, argv);
+  return 0;
+
+error:
+  release_argv(argc, argv);
+  printf("Usage: 'x [N] ADDR', N(int) refers to scan length with a default value 1, ADDR refers to the start address, which can be a expression.\n");
+  return 0;
+}
+
+static int cmd_p(char *args) {
+  bool success = true;
+  word_t result = expr(args, &success);
+  if (success) printf("%ld(%lu)\n", result, result);
+  return 0;
 }

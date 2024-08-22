@@ -37,7 +37,7 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
-  {"([1-9])([0-9])*", TK_DEC},
+  {"([1-9])([0-9])*(UL)?", TK_DEC},
   {"\\+", '+'},         // plus
   {"-", '-'},           // minus
   {"\\*", '*'},         // multiply
@@ -74,9 +74,9 @@ typedef struct token {
   char str[32];
 } Token;
 
-static Token tokens[32] __attribute__((used)) = {};
-static word_t num_stack[32] __attribute__((used)) = {};
-static Token op_stack[32] __attribute__((used)) = {};
+static Token tokens[1024] __attribute__((used)) = {};
+static word_t num_stack[1024] __attribute__((used)) = {};
+static Token op_stack[1024] __attribute__((used)) = {};
 static int num_ptr __attribute__((used)) = 0;
 static int op_ptr __attribute__((used)) = 0;
 static int nr_token __attribute__((used))  = 0;
@@ -95,8 +95,8 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-            i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+        //     i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
@@ -104,7 +104,8 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-
+        // use dup to avoid the bug caused by that string in tokens copied by strncpy have no '\0'
+        char *match = strndup(substr_start, substr_len);
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
           case '+': tokens[nr_token++].type = '+'; break;
@@ -120,9 +121,11 @@ static bool make_token(char *e) {
           case '/': tokens[nr_token++].type = '/'; break;
           case '(': tokens[nr_token++].type = '('; break;
           case ')': tokens[nr_token++].type = ')'; break;
-          case TK_DEC: tokens[nr_token].type = TK_DEC; strncpy(tokens[nr_token++].str, substr_start, substr_len); break;
+          // case TK_DEC: tokens[nr_token].type = TK_DEC; strncpy(tokens[nr_token++].str, substr_start, substr_len); break;
+          case TK_DEC: tokens[nr_token].type = TK_DEC; strcpy(tokens[nr_token++].str, match); break;
           default: ;
         }
+        free(match);
         break;
       }
     }
@@ -144,62 +147,10 @@ static inline bool check_parentheses(int p, int q) {
   return tokens[q].type == ')';
 }
 
-// word_t eval(int p, int q) {
-//   word_t result;
-//   if (p > q)  return 0;
-//   else if (p == q) {
-//     if (tokens[p].type != TK_DEC) return 0;
-//     else {
-//       sscanf(tokens[p].str, "%ld", &result);
-//     }
-//   }
-//   else if (check_parentheses(p, q) == true) {
-//     return eval(p + 1, q - 1);
-//   }
-//   else {
-//     int op = p;
-//     int in_bracket = 0;
-//     bool low_prioty = false;
-//     // find main op
-//     for (int i = p; i <= q; i++) {
-//       if (tokens[i].type == '(') {
-//         in_bracket++;
-//         continue;
-//       }
-//       else if (tokens[i].type == ')') {
-//         in_bracket--;
-//         continue;
-//       }
-//       else if (!in_bracket) {
-//         if ((tokens[i].type == '*' || tokens[i].type == '/') && !low_prioty) {
-//           op = i;
-//         }
-//         else if ((tokens[i].type == '+' || tokens[i].type == '-')) {
-//           op = i;
-//           low_prioty = true;
-//         }
-//       }
-//     }
-//     // calculate each
-//     word_t val1 = eval(p, op - 1);
-//     word_t val2 = eval(op + 1, q);
-//     Log("Main op = %d(%c), L = %ld, R = %ld", op, tokens[op].type, val1, val2);
-//     switch (tokens[op].type) {
-//       case '+': return val1 + val2;
-//       case '-': return val1 - val2;
-//       case '*': return val1 * val2;
-//       case '/': return val1 / val2;
-//       default: Assert(0, "Error operation type: %c", tokens[op].type);
-//     }
-//   }
-//   return result;
-// }
-
 void eval() {
   if (op_stack[op_ptr - 1].type == TK_NEG) {
     num_stack[num_ptr - 1] = -num_stack[num_ptr - 1];
     op_ptr--;
-    // printf("a = -a = %ld\n", num_stack[num_ptr - 1]);
   }
   else {
     word_t b = num_stack[--num_ptr];
@@ -208,10 +159,11 @@ void eval() {
       case '+': num_stack[num_ptr++] = a + b; break;
       case '-': num_stack[num_ptr++] = a - b; break;
       case '*': num_stack[num_ptr++] = a * b; break;
-      case '/': num_stack[num_ptr++] = a / b; break;
+      case '/': {
+        Assert(b != 0, "Error: %ld is divided by 0.", a);
+        num_stack[num_ptr++] = a / b; break;
+      }
     }
-    // printf("a %c b = %ld %c %ld = %ld\n", op_stack[op_ptr].type, a, op_stack[op_ptr].type, b, num_stack[num_ptr-1]);
-    // printf("num_ptr = %d\n", num_ptr);
   }
   return ;
 }
@@ -233,8 +185,7 @@ word_t expr(char *e, bool *success) {
     goto error;
   }
 
-  /* TODO: Insert codes to evaluate the expression. */
-  Log("Total token number: %d", nr_token);
+  // Log("Total token number: %d", nr_token);
   // clear the pointer
   num_ptr = 0;
   op_ptr = 0;
@@ -242,11 +193,7 @@ word_t expr(char *e, bool *success) {
   for (int i = 0; i < nr_token; i++) {
     if (tokens[i].type == '(')  bracket_l++;
     if (tokens[i].type == ')')  bracket_r++;
-    if (tokens[i].type == TK_NEG) printf("fu");
-    else if (tokens[i].type == TK_DEC) printf("%s", tokens[i].str);
-    else printf("%c", tokens[i].type);
   }
-  printf("\n");
   if (bracket_r - bracket_l) {
     fprintf(stderr, "Brackets not match, with %d left brackets, %d right brackets\n", bracket_l, bracket_r);
     goto error;
@@ -267,7 +214,7 @@ word_t expr(char *e, bool *success) {
       op_ptr--;
     }
     else {
-        while (op_ptr > 0 && pr_lut(op_stack[op_ptr - 1].type) > pr_lut(tokens[i].type)) {
+        while (op_ptr > 0 && pr_lut(op_stack[op_ptr - 1].type) >= pr_lut(tokens[i].type)) {
           eval();
         }
         op_stack[op_ptr++].type = tokens[i].type;
