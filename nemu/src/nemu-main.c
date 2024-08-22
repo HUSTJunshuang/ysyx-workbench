@@ -60,7 +60,7 @@ void p_test() {
   while (fgets(buf, sizeof(buf), fp) != NULL) {
     bool success = true;
     char *ans = strtok(buf, " ");
-    char *e = ans + strlen(ans) + 1;
+    char *e = strtok(NULL, "\n");
     char *end_ptr = NULL;
     char *raw_expr = strdup(e);
     answer = strtoul(ans, &end_ptr, 0);
@@ -75,6 +75,8 @@ void p_test() {
       printf("Failed to calc %s\n", raw_expr);
       if (err_cnt++ > 10) return ;
     }
+    free(raw_expr);
   }
+  fclose(fp);
   return ;
 }
