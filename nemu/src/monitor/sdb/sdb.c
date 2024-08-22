@@ -55,6 +55,12 @@ int extract_args(char *args, char ***argv) {
   }
   return argc;
 }
+void release_argv(int argc, char **argv) {
+  for (int i = 0; i < argc; i++) {
+    free(argv[i]);
+  }
+  free(argv);
+}
 
 static int cmd_c(char *args);
 static int cmd_q(char *args);
@@ -188,9 +194,11 @@ static int cmd_si(char *args) {
     printf("Too many arguments.\n");
     goto error;
   }
+  release_argv(argc, argv);
   return 0;
 
 error:
+  release_argv(argc, argv);
   printf("Usage: 'si [N]', N(int) refers to execution times, with a default value 1.\n");
   return 0;
 }
@@ -212,9 +220,11 @@ static int cmd_info(char *args) {
   else {
     goto error;
   }
+  release_argv(argc, argv);
   return 0;
 
 error:
+  release_argv(argc, argv);
   printf("Usage: 'info r'(show regs value) or 'info w'(show watchpoints).\n");
   return 0;
 }
@@ -266,9 +276,11 @@ static int cmd_x(char *args) {
     }
     printf("\n");
   }
+  release_argv(argc, argv);
   return 0;
 
 error:
+  release_argv(argc, argv);
   printf("Usage: 'x [N] ADDR', N(int) refers to scan length with a default value 1, ADDR refers to the start address, which can be a expression.\n");
   return 0;
 }
