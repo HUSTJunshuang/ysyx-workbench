@@ -23,6 +23,7 @@ void engine_start();
 int is_exit_status_bad();
 
 // test func
+void func_check();
 void p_test();
 
 int main(int argc, char *argv[]) {
@@ -34,12 +35,21 @@ int main(int argc, char *argv[]) {
 #endif
 
   /* Self check */
-  p_test();
+  func_check();
 
   /* Start engine. */
   engine_start();
 
   return is_exit_status_bad();
+}
+
+
+void func_check() {
+  Log("Starting to check function of the nemu.");
+
+  p_test();
+
+  Log("Function check finished.");
 }
 
 void p_test() {
@@ -78,7 +88,7 @@ void p_test() {
     free(raw_expr);
   }
   fclose(fp);
-  
+
   if (err_cnt == 0) Log("Expression evaluation test Passed!");
   else Log("Expression evaluation test Passed!");
   return ;
