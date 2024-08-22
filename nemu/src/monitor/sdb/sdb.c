@@ -171,14 +171,26 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char *args) {
-  char *arg = strtok(NULL, " ");
-  if (arg == NULL) {
+  // char *arg = strtok(NULL, " ");
+  char **argv = NULL;
+  int argc = extract_args(args, &argv);
+  // if (arg == NULL) {
+  if (argc == 0) {
     cpu_exec(1);
   }
-  else {
+  else if (argc == 1) {
     // TODO si x
-    int step = atoi(arg);
-    cpu_exec(step);
+    char *end_ptr = NULL;
+    uint64_t step = strtoul(argv[0], &end_ptr, 0);
+    if ((step == 0) || (argv[0] + strlen(argv[0]) != end_ptr)) {
+      printf("Step size (%s) not valid, please input a none-zero number\n", argv[0]);
+    }
+    else {
+      cpu_exec(step);
+    }
+  }
+  else {
+    printf("Too many arguments\n");
   }
   return 0;
 }
