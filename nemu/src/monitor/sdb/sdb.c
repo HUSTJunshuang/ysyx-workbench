@@ -223,7 +223,7 @@ error:
 }
 
 static int cmd_x(char *args) {
-  char **argv;
+  char **argv = NULL;
   int argc = extract_args(args, &argv);
   if (argc == 0) {
     goto error;
