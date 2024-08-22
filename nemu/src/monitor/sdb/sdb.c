@@ -73,7 +73,7 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-  { "si", "Single-step execution,\n\tUsage: 'si [N]', N(int) refers to execution times, with a default value 1.", cmd_si },
+  { "si", "Single-step execution,\n\tUsage: 'si [N]', N(none-zero integer) refers to execution times, with a default value 1.", cmd_si },
   { "info", "Display information about regs('info r') or wathcpoints('info w')", cmd_info },
   { "x", "Display memory content,\n\tUasge: 'x N ADDR', N(int) refers to scan length, ADDR refers to the start address, which can be a expression.", cmd_x },
   { "p", "Calculate expressions.", cmd_p },
@@ -171,27 +171,31 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char *args) {
-  // char *arg = strtok(NULL, " ");
   char **argv = NULL;
   int argc = extract_args(args, &argv);
-  // if (arg == NULL) {
+
   if (argc == 0) {
     cpu_exec(1);
   }
   else if (argc == 1) {
-    // TODO si x
     char *end_ptr = NULL;
     uint64_t step = strtoul(argv[0], &end_ptr, 0);
     if ((step == 0) || (argv[0] + strlen(argv[0]) != end_ptr)) {
-      printf("Step size (%s) not valid, please input a none-zero number\n", argv[0]);
+      printf("Step size (%s) not valid, please input a none-zero number.\n", argv[0]);
+      goto error;
     }
     else {
       cpu_exec(step);
     }
   }
   else {
-    printf("Too many arguments\n");
+    printf("Too many arguments.\n");
+    goto error;
   }
+  return 0;
+
+error:
+  printf("Usage: 'si [N]', N(none-zero integer) refers to execution times, with a default value 1.\n");
   return 0;
 }
 
