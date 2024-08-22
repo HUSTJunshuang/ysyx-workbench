@@ -244,7 +244,7 @@ static int cmd_x(char *args) {
     // scan N words pointed by ADDR
     N = strtoul(argv[0], &end_ptr, 0);
     if (argv[0] + strlen(argv[0]) != end_ptr) {
-      printf("N (%s) not valid,please input a integer.\n", argv[0]);
+      printf("N (%s) not valid, please input a integer.\n", argv[0]);
       goto error;
     }
     end_ptr = NULL;
@@ -258,23 +258,6 @@ static int cmd_x(char *args) {
     printf("Too many arguments.\n");
     goto error;
   }
-  // int ret;
-  // char extra[512] = "";
-  // // process len
-  // char *arg = strtok(NULL, " ");
-  // if (arg == NULL)  goto error;
-  // ret = sscanf(arg, "%d%s", &len, extra);
-  // printf("ret = %d\n", ret);
-  // printf("extra = %s\n", extra);
-  // if (ret != 1)  goto error;
-  // // process address
-  // arg = strtok(NULL, " ");
-  // if (arg == NULL)  goto error;
-  // ret = sscanf(arg, "0x%x %s", &addr, extra);
-  // printf("ret = %d\n", ret);
-  // printf("extra = %s\n", extra);
-  // if (ret != 1)  goto error;
-  Log("N = %d, address = %d", N, addr);
   // four word in a line
   for (int i = 0; i < N; i += 4) {
     printf("0x%x <tag>:", addr + i * 4);
