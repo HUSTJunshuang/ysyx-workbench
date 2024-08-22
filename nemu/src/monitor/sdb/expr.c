@@ -74,9 +74,9 @@ typedef struct token {
   char str[32];
 } Token;
 
-static Token tokens[32] __attribute__((used)) = {};
-static word_t num_stack[32] __attribute__((used)) = {};
-static Token op_stack[32] __attribute__((used)) = {};
+static Token tokens[1024] __attribute__((used)) = {};
+static word_t num_stack[1024] __attribute__((used)) = {};
+static Token op_stack[1024] __attribute__((used)) = {};
 static int num_ptr __attribute__((used)) = 0;
 static int op_ptr __attribute__((used)) = 0;
 static int nr_token __attribute__((used))  = 0;
@@ -95,8 +95,8 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-        //     i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+            i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
@@ -234,7 +234,7 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  // Log("Total token number: %d", nr_token);
+  Log("Total token number: %d", nr_token);
   // clear the pointer
   num_ptr = 0;
   op_ptr = 0;
