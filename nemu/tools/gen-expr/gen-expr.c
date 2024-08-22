@@ -25,9 +25,10 @@ static char buf[65536] = {};
 static char code_buf[65536 + 128] = {}; // a little larger than `buf`
 static char *code_format =
 "#include <stdio.h>\n"
+"#include <stdint.h>\n"
 "int main() { "
-"  unsigned result = %s; "
-"  printf(\"%%u\", result); "
+"  uint64_t result = %s; "
+"  printf(\"%%lu\", result); "
 "  return 0; "
 "}";
 
@@ -38,11 +39,11 @@ static int DEPTH = 0;
 #define MAX_SPACE_LEN 1
 const int MAX_DEPTH = 32;
 const char *OP_LIST[OP_SIZE] = {"+", "-", "*", "/"};
-const unsigned MAX_UINT = 0xffffffff;
+const uint64_t MAX_UINT = 0xffffffff;
 
 // function declarations
 static inline void gen_reset();
-static inline unsigned choose(unsigned n);
+static inline uint64_t choose(uint64_t n);
 static inline void gen(const char *s);
 static inline void gen_num();
 static inline void gen_rand_op();
@@ -94,11 +95,11 @@ int main(int argc, char *argv[]) {
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
 
-    int result;
-    ret = fscanf(fp, "%d", &result);
+    uint64_t result;
+    ret = fscanf(fp, "%ld", &result);
     pclose(fp);
 
-    printf("%u %s\n", result, buf);
+    printf("%lu %s\n", result, buf);
     if (i % 50 == 0) fprintf(stderr, "Running, finished %d/%d\n", i, loop);
   }
   return 0;
@@ -110,7 +111,7 @@ static inline void gen_reset() {
   return ;
 }
 
-static inline unsigned choose(unsigned n) {
+static inline uint64_t choose(uint64_t n) {
   return rand() % n;
 }
 
@@ -120,9 +121,9 @@ static inline void gen(const char *s) {
 }
 
 static inline void gen_num() {
-  unsigned num = choose(MAX_UINT);
-  char tmp[16];
-  sprintf(tmp, "%u", num);
+  uint64_t num = choose(MAX_UINT);
+  char tmp[32];
+  sprintf(tmp, "%lu", num);
   strcat(buf, tmp);
   return ;
 }
@@ -133,7 +134,7 @@ static inline void gen_rand_op() {
 }
 
 static inline void gen_space() {
-  unsigned cnt = choose(MAX_SPACE_LEN + 1);
+  int cnt = choose(MAX_SPACE_LEN + 1);
   char tmp[MAX_SPACE_LEN + 1];
   sprintf(tmp, "%*s", cnt, "");
   strcat(buf, tmp);
