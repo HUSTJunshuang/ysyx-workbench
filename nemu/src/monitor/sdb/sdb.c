@@ -219,7 +219,7 @@ static int cmd_info(char *args) {
   return 0;
 
 error:
-  printf("Usage: 'info r'(show regs value) or 'info w'(show watchpoints)\n");
+  printf("Usage: 'info r'(show regs value) or 'info w'(show watchpoints).\n");
   return 0;
 }
 
