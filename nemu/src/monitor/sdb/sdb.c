@@ -258,7 +258,7 @@ static int cmd_x(char *args) {
     printf("Too many arguments.\n");
     goto error;
   }
-  // four word in a line
+  // four words in a line
   for (int i = 0; i < N; i += 4) {
     printf("0x%x <tag>:", addr + i * 4);
     for (int j = 0; j < 4; j++) {
