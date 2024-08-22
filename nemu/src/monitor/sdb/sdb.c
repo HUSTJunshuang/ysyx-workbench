@@ -276,6 +276,6 @@ error:
 static int cmd_p(char *args) {
   bool success = true;
   word_t result = expr(args, &success);
-  if (success) printf("%ld\n", result);
+  if (success) printf("%ld(%lu)\n", result, result);
   return 0;
 }

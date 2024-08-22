@@ -27,7 +27,7 @@ static char *code_format =
 "#include <stdio.h>\n"
 "#include <stdint.h>\n"
 "int main() { "
-"  uint64_t result = %s; "
+"  uint64_t result = (uint64_t)%s; "
 "  printf(\"%%lu\", result); "
 "  return 0; "
 "}";
