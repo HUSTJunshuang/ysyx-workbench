@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 #endif
 
   /* Self check */
-  // p_test();
+  p_test();
 
   /* Start engine. */
   engine_start();
