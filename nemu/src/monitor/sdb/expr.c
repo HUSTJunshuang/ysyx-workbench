@@ -254,6 +254,7 @@ word_t expr(char *e, bool *success) {
   // Calculate
   for (int i = 0; i < nr_token; i++) {
     if (tokens[i].type == TK_DEC) {
+      printf("num.str = %s\n", tokens[i].str);
       num_stack[num_ptr++] = strtoul(tokens[i].str, NULL, 10);
     }
     else if (tokens[i].type == '(') {
