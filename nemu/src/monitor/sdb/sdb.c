@@ -274,6 +274,7 @@ static int cmd_x(char *args) {
   // printf("ret = %d\n", ret);
   // printf("extra = %s\n", extra);
   // if (ret != 1)  goto error;
+  Log("N = %d, address = %d", N, addr);
   // four word in a line
   for (int i = 0; i < N; i += 4) {
     printf("0x%x <tag>:", addr + i * 4);
