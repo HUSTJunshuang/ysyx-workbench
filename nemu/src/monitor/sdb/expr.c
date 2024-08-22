@@ -234,7 +234,7 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  Log("Total token number: %d", nr_token);
+  // Log("Total token number: %d", nr_token);
   // clear the pointer
   num_ptr = 0;
   op_ptr = 0;
@@ -242,11 +242,7 @@ word_t expr(char *e, bool *success) {
   for (int i = 0; i < nr_token; i++) {
     if (tokens[i].type == '(')  bracket_l++;
     if (tokens[i].type == ')')  bracket_r++;
-    if (tokens[i].type == TK_NEG) printf("fu");
-    else if (tokens[i].type == TK_DEC) printf("%s", tokens[i].str);
-    else printf("%c", tokens[i].type);
   }
-  printf("\n");
   if (bracket_r - bracket_l) {
     fprintf(stderr, "Brackets not match, with %d left brackets, %d right brackets\n", bracket_l, bracket_r);
     goto error;
