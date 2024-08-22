@@ -123,7 +123,7 @@ static inline void gen(const char *s) {
 static inline void gen_num() {
   uint64_t num = choose(MAX_UINT);
   char tmp[32];
-  sprintf(tmp, "%lu", num);
+  sprintf(tmp, "%luUL", num);
   strcat(buf, tmp);
   return ;
 }
