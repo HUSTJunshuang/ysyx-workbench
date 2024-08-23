@@ -43,7 +43,7 @@ static struct rule {
 
   {" +", TK_NOTYPE},    // spaces
   {"([1-9])([0-9])*(UL)?", TK_NUM},
-  {"0x[0-1a-fA-F]+", TK_NUM},
+  {"0[xX][0-9a-fA-F]+", TK_NUM},
   {"\\$.{2}", TK_REG},
   {"\\+", '+'},         // plus
   {"-", '-'},           // minus
