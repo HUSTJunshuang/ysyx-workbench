@@ -166,7 +166,7 @@ static inline bool check_parentheses(int p, int q) {
   return tokens[q].type == ')';
 }
 
-void eval() {
+bool eval() {
   if (op_stack[op_ptr - 1].type == TK_NEG) {
     num_stack[num_ptr - 1] = -num_stack[num_ptr - 1];
     op_ptr--;
@@ -184,6 +184,10 @@ void eval() {
       case '*': num_stack[num_ptr++] = a * b; break;
       case '/': {
         // Assert(b != 0, "Error: %ld is divided by 0.", a);
+        if (b != 0) {
+          printf("Error: %ld is divided by 0.", a);
+          return false;
+        }
         num_stack[num_ptr++] = a / b; break;
       }
       case '%': num_stack[num_ptr++] = a % b; break;
@@ -196,7 +200,7 @@ void eval() {
       case TK_NEQ:  num_stack[num_ptr++] = a != b; break;
     }
   }
-  return ;
+  return true;
 }
 
 inline int pr_lut(int c) {
@@ -260,19 +264,19 @@ word_t expr(char *e, bool *success) {
     }
     else if (tokens[i].type == ')') {
       while (op_stack[op_ptr - 1].type != '(') {
-        eval();
+        if (!eval()) goto error;
       }
       op_ptr--;
     }
     else {
         while (op_ptr > 0 && pr_lut(op_stack[op_ptr - 1].type) >= pr_lut(tokens[i].type)) {
-          eval();
+          if (!eval()) goto error;
         }
         op_stack[op_ptr++].type = tokens[i].type;
     }
   }
   while (op_ptr > 0) {
-    eval();
+    if (!eval()) goto error;
   }
 
   return num_stack[0];
