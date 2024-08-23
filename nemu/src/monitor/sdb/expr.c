@@ -45,7 +45,7 @@ static struct rule {
   {"([1-9])([0-9])*(UL)?", TK_NUM},
   {"0[xX][0-9a-fA-F]+", TK_NUM},
   {"0(UL)?", TK_NUM},
-  {"\\$[\\$a-z0-9]*}", TK_REG},
+  {"\\$[a-z0-9]*}", TK_REG},
   {"\\+", '+'},         // plus
   {"-", '-'},           // minus
   {"\\*", '*'},         // multiply
