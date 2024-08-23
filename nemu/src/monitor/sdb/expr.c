@@ -14,6 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
+#include <memory/paddr.h>
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
@@ -21,8 +22,12 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_POS, TK_NEG,
-  TK_DEC,
+  TK_NOTYPE = 256,
+  TK_EQ, TK_NEQ,
+  TK_BAND, TK_BOR, TK_XOR,
+  TK_LAND, TK_LOR,
+  TK_REG, TK_PTR,
+  TK_NEG, TK_NUM,
   /* TODO: Add more token types */
 
 };
@@ -37,15 +42,24 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
-  {"([1-9])([0-9])*(UL)?", TK_DEC},
+  {"([1-9])([0-9])*(UL)?", TK_NUM},
+  {"0x[0-1a-fA-F]+", TK_NUM},
+  {"\\$.{2}", TK_REG},
   {"\\+", '+'},         // plus
   {"-", '-'},           // minus
   {"\\*", '*'},         // multiply
   {"/", '/'},           // divide
+  {"%%", '%'},          // mod
   {"\\(", '('},         // left bracket
   {"\\)", ')'},         // right bracket
   
   {"==", TK_EQ},        // equal
+  {"!=", TK_NEQ},       // not equal
+  {"&&", TK_LAND},      // logic and
+  {"\\|\\|", TK_LOR},   // logic or
+  {"&", TK_BAND},       // bit-wise and
+  {"\\|", TK_BOR},      // bit-wise or
+  {"\\^", TK_XOR},      // bit-wise xor
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -108,22 +122,34 @@ static bool make_token(char *e) {
         char *match = strndup(substr_start, substr_len);
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
-          case '+': tokens[nr_token++].type = '+'; break;
+          // case '+': tokens[nr_token++].type = '+'; break;
           case '-': {
             if (nr_token == 0 || (nr_token > 0 && ((tokens[nr_token - 1].type != ')') &&
-                (tokens[nr_token - 1].type != TK_DEC)))) {
+                (tokens[nr_token - 1].type != TK_NUM)))) {
               tokens[nr_token++].type = TK_NEG;
             }
             else tokens[nr_token++].type = '-';
             break;
           }
-          case '*': tokens[nr_token++].type = '*'; break;
-          case '/': tokens[nr_token++].type = '/'; break;
-          case '(': tokens[nr_token++].type = '('; break;
-          case ')': tokens[nr_token++].type = ')'; break;
+          case '*': {
+            if (nr_token == 0 || (nr_token > 0 && ((tokens[nr_token - 1].type != ')') &&
+                (tokens[nr_token - 1].type != TK_NUM)))) {
+              tokens[nr_token++].type = TK_PTR;
+            }
+            else tokens[nr_token++].type = '*';
+            break;
+          }
+          // case '/': tokens[nr_token++].type = '/'; break;
+          // case '%': tokens[nr_token++].type = '%'; break;
+          // case '(': tokens[nr_token++].type = '('; break;
+          // case ')': tokens[nr_token++].type = ')'; break;
           // case TK_DEC: tokens[nr_token].type = TK_DEC; strncpy(tokens[nr_token++].str, substr_start, substr_len); break;
-          case TK_DEC: tokens[nr_token].type = TK_DEC; strcpy(tokens[nr_token++].str, match); break;
-          default: ;
+          case TK_NUM: tokens[nr_token].type = TK_NUM; strcpy(tokens[nr_token++].str, match); break;
+          case TK_REG: tokens[nr_token].type = TK_REG; strcpy(tokens[nr_token++].str, match); break;
+          // case TK_LOR: tokens[nr_token++].type = TK_LOR; break;
+          // case TK_LAND: tokens[nr_token++].type = TK_LAND; break;
+          // case TK_BOR: tokens[nr_token++].type = TK_BOR; break;
+          default: tokens[nr_token++].type = rules[i].token_type;
         }
         free(match);
         break;
@@ -152,6 +178,10 @@ void eval() {
     num_stack[num_ptr - 1] = -num_stack[num_ptr - 1];
     op_ptr--;
   }
+  else if (op_stack[op_ptr - 1].type == TK_PTR) {
+    num_stack[num_ptr - 1] = paddr_read(num_stack[num_ptr - 1], MUXDEF(CONFIG_ISA64, 8, 4));
+    op_ptr--;
+  }
   else {
     word_t b = num_stack[--num_ptr];
     word_t a = num_stack[--num_ptr];
@@ -160,9 +190,17 @@ void eval() {
       case '-': num_stack[num_ptr++] = a - b; break;
       case '*': num_stack[num_ptr++] = a * b; break;
       case '/': {
-        Assert(b != 0, "Error: %ld is divided by 0.", a);
+        // Assert(b != 0, "Error: %ld is divided by 0.", a);
         num_stack[num_ptr++] = a / b; break;
       }
+      case '%': num_stack[num_ptr++] = a % b; break;
+      case TK_LOR:  num_stack[num_ptr++] = a || b; break;
+      case TK_LAND: num_stack[num_ptr++] = a && b; break;
+      case TK_BOR:  num_stack[num_ptr++] = a | b; break;
+      case TK_XOR:  num_stack[num_ptr++] = a ^ b; break;
+      case TK_BAND: num_stack[num_ptr++] = a & b; break;
+      case TK_EQ:   num_stack[num_ptr++] = a == b; break;
+      case TK_NEQ:  num_stack[num_ptr++] = a != b; break;
     }
   }
   return ;
@@ -170,11 +208,21 @@ void eval() {
 
 inline int pr_lut(int c) {
   switch (c) {
-    case '+': return 1;
-    case '-': return 1;
-    case '*': return 2;
-    case '/': return 2;
-    case TK_NEG: return 3;
+    case TK_LOR:  return 4;
+    case TK_LAND: return 5;
+    case TK_BOR:  return 6;
+    case TK_XOR:  return 7;
+    case TK_BAND: return 8;
+    case TK_EQ:   return 9;
+    case TK_NEQ:  return 9;
+    case '+':     return 12;
+    case '-':     return 12;
+    case '*':     return 13;
+    case '/':     return 13;
+    case '%':     return 13;
+    case TK_NEG:  return 15;
+    case TK_REG:  return 15;
+    case TK_PTR:  return 15;
     // case '(': return 16;
   }
   return 0;
@@ -201,8 +249,18 @@ word_t expr(char *e, bool *success) {
 
   // Calculate
   for (int i = 0; i < nr_token; i++) {
-    if (tokens[i].type == TK_DEC) {
-      num_stack[num_ptr++] = strtoul(tokens[i].str, NULL, 10);
+    if (tokens[i].type == TK_NUM) {
+      num_stack[num_ptr++] = strtoul(tokens[i].str, NULL, 0);
+    }
+    else if (tokens[i].type == TK_REG) {
+      // read reg
+      bool valid = true;
+      word_t regv = isa_reg_str2val(tokens[i].str + 1, &valid);
+      if (!valid) {
+        printf("Invalid reg name: \"%s\".\n", tokens[i].str + 1);
+        goto error;
+      }
+      num_stack[num_ptr++] = regv;
     }
     else if (tokens[i].type == '(') {
       op_stack[op_ptr++].type = '(';
