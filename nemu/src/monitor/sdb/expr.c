@@ -50,7 +50,7 @@ static struct rule {
   {"-", '-'},           // minus
   {"\\*", '*'},         // multiply
   {"/", '/'},           // divide
-  {"%%", '%'},          // mod
+  {"\%", '%'},          // mod
   {"\\(", '('},         // left bracket
   {"\\)", ')'},         // right bracket
   
