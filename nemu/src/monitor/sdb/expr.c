@@ -185,7 +185,7 @@ bool eval() {
       case '/': {
         // Assert(b != 0, "Error: %ld is divided by 0.", a);
         if (b == 0) {
-          printf("Error: %ld is divided by 0.", a);
+          printf("Error: %ld is divided by 0.\n", a);
           return false;
         }
         num_stack[num_ptr++] = a / b; break;
