@@ -30,5 +30,16 @@ void isa_reg_display() {
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
+  *success = false;
+  if (strcmp(s, "pc") == 0) {
+    *success = true;
+    return cpu.pc;
+  }
+  for (int idx = 0; idx < MUXDEF(CONFIG_RVE, 16, 32); idx++) {
+    if (strcmp(s, regs[idx]) == 0) {
+      *success = true;
+      return gpr(idx);
+    }
+  }
   return 0;
 }
