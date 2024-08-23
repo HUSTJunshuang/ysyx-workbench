@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 
 
 void func_check() {
-  Log("Starting to check function of the nemu.");
+  Log("Starting to check functions of nemu.");
 
   p_test();
 

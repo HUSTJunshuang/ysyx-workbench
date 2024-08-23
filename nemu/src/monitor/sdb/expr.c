@@ -147,62 +147,10 @@ static inline bool check_parentheses(int p, int q) {
   return tokens[q].type == ')';
 }
 
-// word_t eval(int p, int q) {
-//   word_t result;
-//   if (p > q)  return 0;
-//   else if (p == q) {
-//     if (tokens[p].type != TK_DEC) return 0;
-//     else {
-//       sscanf(tokens[p].str, "%ld", &result);
-//     }
-//   }
-//   else if (check_parentheses(p, q) == true) {
-//     return eval(p + 1, q - 1);
-//   }
-//   else {
-//     int op = p;
-//     int in_bracket = 0;
-//     bool low_prioty = false;
-//     // find main op
-//     for (int i = p; i <= q; i++) {
-//       if (tokens[i].type == '(') {
-//         in_bracket++;
-//         continue;
-//       }
-//       else if (tokens[i].type == ')') {
-//         in_bracket--;
-//         continue;
-//       }
-//       else if (!in_bracket) {
-//         if ((tokens[i].type == '*' || tokens[i].type == '/') && !low_prioty) {
-//           op = i;
-//         }
-//         else if ((tokens[i].type == '+' || tokens[i].type == '-')) {
-//           op = i;
-//           low_prioty = true;
-//         }
-//       }
-//     }
-//     // calculate each
-//     word_t val1 = eval(p, op - 1);
-//     word_t val2 = eval(op + 1, q);
-//     Log("Main op = %d(%c), L = %ld, R = %ld", op, tokens[op].type, val1, val2);
-//     switch (tokens[op].type) {
-//       case '+': return val1 + val2;
-//       case '-': return val1 - val2;
-//       case '*': return val1 * val2;
-//       case '/': return val1 / val2;
-//       default: Assert(0, "Error operation type: %c", tokens[op].type);
-//     }
-//   }
-//   return result;
-// }
-
 void eval() {
   if (op_stack[op_ptr - 1].type == TK_NEG) {
     num_stack[num_ptr - 1] = -num_stack[num_ptr - 1];
     op_ptr--;
-    // printf("a = -a = %ld\n", num_stack[num_ptr - 1]);
   }
   else {
     word_t b = num_stack[--num_ptr];
@@ -216,8 +164,6 @@ void eval() {
         num_stack[num_ptr++] = a / b; break;
       }
     }
-    // printf("a %c b = %ld %c %ld = %ld\n", op_stack[op_ptr].type, a, op_stack[op_ptr].type, b, num_stack[num_ptr-1]);
-    // printf("num_ptr = %d\n", num_ptr);
   }
   return ;
 }
@@ -239,7 +185,6 @@ word_t expr(char *e, bool *success) {
     goto error;
   }
 
-  /* TODO: Insert codes to evaluate the expression. */
   // Log("Total token number: %d", nr_token);
   // clear the pointer
   num_ptr = 0;
