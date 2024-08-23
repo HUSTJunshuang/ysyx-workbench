@@ -45,7 +45,7 @@ static struct rule {
   {"([1-9])([0-9])*(UL)?", TK_NUM},
   {"0[xX][0-9a-fA-F]+", TK_NUM},
   {"0(UL)?", TK_NUM},
-  {"\\$.*", TK_REG},
+  {"\\$.{0,2}", TK_REG},
   {"\\+", '+'},         // plus
   {"-", '-'},           // minus
   {"\\*", '*'},         // multiply
@@ -123,7 +123,6 @@ static bool make_token(char *e) {
         char *match = strndup(substr_start, substr_len);
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
-          // case '+': tokens[nr_token++].type = '+'; break;
           case '-': {
             if (nr_token == 0 || (nr_token > 0 && ((tokens[nr_token - 1].type != ')') &&
                 (tokens[nr_token - 1].type != TK_NUM)))) {
@@ -140,16 +139,9 @@ static bool make_token(char *e) {
             else tokens[nr_token++].type = '*';
             break;
           }
-          // case '/': tokens[nr_token++].type = '/'; break;
-          // case '%': tokens[nr_token++].type = '%'; break;
-          // case '(': tokens[nr_token++].type = '('; break;
-          // case ')': tokens[nr_token++].type = ')'; break;
           // case TK_DEC: tokens[nr_token].type = TK_DEC; strncpy(tokens[nr_token++].str, substr_start, substr_len); break;
           case TK_NUM: tokens[nr_token].type = TK_NUM; strcpy(tokens[nr_token++].str, match); break;
           case TK_REG: tokens[nr_token].type = TK_REG; strcpy(tokens[nr_token++].str, match); break;
-          // case TK_LOR: tokens[nr_token++].type = TK_LOR; break;
-          // case TK_LAND: tokens[nr_token++].type = TK_LAND; break;
-          // case TK_BOR: tokens[nr_token++].type = TK_BOR; break;
           default: tokens[nr_token++].type = rules[i].token_type;
         }
         free(match);
