@@ -47,7 +47,9 @@ WP* new_wp() {
   else {
     ret = free_;
     free_ = free_->next;
-    free_->front = NULL;
+    if (free_ != NULL) {
+      free_->front = NULL;
+    }
     // add to head
     ret->NO = ++wp_id;
     ret->front = NULL;
