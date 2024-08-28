@@ -297,7 +297,6 @@ static int cmd_p(char *args) {
 
 static int cmd_w(char *args) {
   bool success = true;
-  printf("args = %s\n", args);
   // TODO filter the const value
   word_t val = expr(args, &success);
   if (!success){
