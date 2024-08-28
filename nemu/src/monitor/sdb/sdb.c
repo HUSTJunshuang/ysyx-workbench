@@ -87,7 +87,6 @@ static struct {
   { "p", "Calculate expressions.", cmd_p },
   { "w", "Add watchpoint.", cmd_w},
   { "d", "Delete watchpoint by the id,\n\tUsage: 'd ID0 ... IDx', ID(int) refers to the watchpoint id to be deleted.", cmd_d}
-  /* TODO: Add more commands */
 
 };
 
@@ -298,6 +297,7 @@ static int cmd_p(char *args) {
 
 static int cmd_w(char *args) {
   bool success = true;
+  printf("args = %s\n", args);
   // TODO filter the const value
   word_t val = expr(args, &success);
   if (!success){
