@@ -283,7 +283,11 @@ word_t expr(char *e, bool *success) {
     if (!eval()) goto error;
   }
 
-  return num_stack[0];
+  if (num_ptr != 1){
+    printf("Invalid input expression.\n");
+    goto error;
+  }
+  return num_stack[num_ptr - 1];
 
 error:
   *success = false;
