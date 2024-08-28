@@ -233,6 +233,10 @@ word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     goto error;
   }
+  if (nr_token == 0) {
+    printf("No expression input.\n");
+    goto error;
+  }
 
   // Log("Total token number: %d", nr_token);
   // clear the pointer
