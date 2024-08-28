@@ -20,7 +20,7 @@
 
 
 static WP wp_pool[NR_WP] = {};
-static WP *head = NULL, *free_ = NULL;
+static WP *head = NULL, *tail = NULL, *free_ = NULL;
 static int wp_id = 0;
 
 void init_wp_pool() {
@@ -34,6 +34,7 @@ void init_wp_pool() {
   }
 
   head = NULL;
+  tail = NULL;
   free_ = wp_pool;
 }
 
@@ -51,7 +52,12 @@ WP* new_wp() {
     ret->NO = ++wp_id;
     ret->front = NULL;
     ret->next = head;
-    if (head != NULL) head->front = ret;
+    if (head != NULL){
+      head->front = ret;
+    }
+    else{
+      tail = ret;
+    }
     head = ret;
   }
   return ret;
@@ -79,6 +85,9 @@ void free_wp(int wp_id) {
   if (wp->next != NULL) {
     wp->next->front = wp->front;
   }
+  else {
+    tail = wp->front;
+  }
   // free the expression
   free(wp->expression);
   // add to free_
@@ -87,5 +96,19 @@ void free_wp(int wp_id) {
   free_->front = wp;
   free_ = wp;
 error:
+  return ;
+}
+
+void print_wp() {
+  // travel from the tail
+  if (tail == NULL) {
+    printf("No watchpoints.\n");
+    return ;
+  }
+  WP *wp = tail;
+  printf("%-8s%s\n", "ID", "What");
+  while (wp != NULL) {
+    printf("%-8d%s\n", wp->NO, wp->expression);
+  }
   return ;
 }

@@ -211,16 +211,15 @@ error:
 static int cmd_info(char *args) {
   char **argv = NULL;
   int argc = extract_args(args, &argv);
-
   if (argc != 1) {
     goto error;
   }
+
   if (strcmp(argv[0], "r") == 0) {
     isa_reg_display();
   }
   else if (strcmp(argv[0], "w") == 0) {
-    // TODO print watchpoint
-    printf("TBD\n");
+    print_wp();
   }
   else {
     goto error;
@@ -299,6 +298,7 @@ static int cmd_p(char *args) {
 
 static int cmd_w(char *args) {
   bool success = true;
+  // TODO filter the const value
   word_t val = expr(args, &success);
   if (!success){
     printf(ANSI_FMT("Error: ", ANSI_FG_RED) "Expression evaluation faild.\n");
@@ -328,5 +328,6 @@ static int cmd_d(char *args) {
   }
   free_wp(del_id);
 error:
+  release_argv(argc, argv);
   return 0;
 }
