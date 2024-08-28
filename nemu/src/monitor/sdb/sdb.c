@@ -305,6 +305,7 @@ static int cmd_w(char *args) {
     goto error;
   }
   WP *wp = new_wp();
+  if (wp == NULL) goto error;
   wp->expression = strdup(args);
   wp->old_val = val;
   printf("Watchpoint %d: %s\n", wp->NO, args);
