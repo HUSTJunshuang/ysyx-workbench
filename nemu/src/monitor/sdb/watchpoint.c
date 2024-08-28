@@ -51,7 +51,7 @@ WP* new_wp() {
     ret->NO = ++wp_id;
     ret->front = NULL;
     ret->next = head;
-    head->front = ret;
+    if (head != NULL) head->front = ret;
     head = ret;
   }
   return ret;
