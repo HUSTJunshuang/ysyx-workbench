@@ -109,6 +109,7 @@ void print_wp() {
   printf("%-8s%s\n", "ID", "What");
   while (wp != NULL) {
     printf("%-8d%s\n", wp->NO, wp->expression);
+    wp = wp->front;
   }
   return ;
 }
