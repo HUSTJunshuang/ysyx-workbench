@@ -17,22 +17,20 @@
 
 #define NR_WP 32
 
-typedef struct watchpoint {
-  int NO;
-  struct watchpoint *next;
 
-  /* TODO: Add more members if necessary */
-
-} WP;
 
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
+static int wp_id = 0;
 
 void init_wp_pool() {
   int i;
   for (i = 0; i < NR_WP; i ++) {
     wp_pool[i].NO = i;
+    wp_pool[i].front = (i == 0) ? NULL : &wp_pool[i - 1];
     wp_pool[i].next = (i == NR_WP - 1 ? NULL : &wp_pool[i + 1]);
+    wp_pool[i].expression = NULL;
+    wp_pool[i].old_val = 0;
   }
 
   head = NULL;
@@ -40,4 +38,54 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
+WP* new_wp() {
+  WP *ret = NULL;
+  if (free_ == NULL) {
+    printf("No free Watchpoint, please release some of it.\n");
+  }
+  else {
+    ret = free_;
+    free_ = free_->next;
+    free_->front = NULL;
+    // add to head
+    ret->NO = ++wp_id;
+    ret->front = NULL;
+    ret->next = head;
+    head->front = ret;
+    head = ret;
+  }
+  return ret;
+}
 
+void free_wp(int wp_id) {
+  WP *wp = head;
+  while (wp != NULL) {
+    if (wp->NO == wp_id) break;
+    wp = wp->next;
+  }
+  // Assert(wp != NULL, "Not a valid watchpoint, maybe double freed.");
+  if (wp == NULL) {
+    printf("Invalid id, no watchpoint denoted by %d\n", wp_id);
+    goto error;
+  }
+  // if in the head
+  if (wp->front == NULL) {
+    head = wp->next;
+  }
+  else {
+    wp->front->next = wp->next;
+  }
+  // if not in the tail
+  if (wp->next != NULL) {
+    wp->next->front = wp->front;
+  }
+  // free the expression
+  free(wp->expression);
+  // add to free_
+  wp->front = NULL;
+  wp->next = free_;
+  free_->front = wp;
+  free_ = wp;
+error:
+  return ;
+}
