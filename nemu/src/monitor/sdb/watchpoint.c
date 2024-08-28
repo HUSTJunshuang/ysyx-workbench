@@ -95,7 +95,9 @@ void free_wp(int wp_id) {
   // add to free_
   wp->front = NULL;
   wp->next = free_;
-  free_->front = wp;
+  if (free_ != NULL) {
+    free_->front = wp;
+  }
   free_ = wp;
 error:
   return ;
