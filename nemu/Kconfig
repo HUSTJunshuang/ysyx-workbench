@@ -127,6 +127,10 @@ endmenu
 menu "Testing and Debugging"
 
 
+config POST
+  bool "Enable POST(Power On Self Test)"
+  default n
+
 config TRACE
   bool "Enable tracer"
   default y

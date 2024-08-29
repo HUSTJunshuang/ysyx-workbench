@@ -35,7 +35,9 @@ int main(int argc, char *argv[]) {
 #endif
 
   /* Self check */
+#ifdef CONFIG_POST
   func_check();
+#endif
 
   /* Start engine. */
   engine_start();
