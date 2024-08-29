@@ -16,7 +16,9 @@
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
+#include <memory/paddr.h>
 #include <locale.h>
+#include <utils.h>
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -42,6 +44,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
   if (check_wp()) {
     nemu_state.state = NEMU_STOP;
+    uint32_t next_inst = paddr_read(cpu.pc, 4);
+    printf(ANSI_FMT(FMT_WORD ":", ANSI_FG_BLUE) "0x%08x\n", cpu.pc, next_inst);
     printf("TBD, print the next instruction.\n");
   }
 }

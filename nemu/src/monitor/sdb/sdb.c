@@ -145,6 +145,7 @@ void init_sdb() {
 
 /* ---------- Function Implementations ---------- */
 static int cmd_c(char *args) {
+  printf("Continuing.\n");
   cpu_exec(-1);
   return 0;
 }
