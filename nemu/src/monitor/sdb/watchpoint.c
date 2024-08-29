@@ -117,3 +117,23 @@ void print_wp() {
   }
   return ;
 }
+
+bool check_wp() {
+  if (tail == NULL) return false;
+  WP *wp = tail;
+  bool success, hit_trap = false;
+  while (wp != NULL) {
+    word_t new_val = expr(wp->expression, &success);
+    if (new_val != wp->old_val) {
+      printf("\nWatchpoint %d: %s\n\n", wp->NO, wp->expression);
+      printf("Old value = %ld(0x%lx)\n", wp->old_val, wp->old_val);
+      printf("New value = %ld(0x%lx)\n", new_val, new_val);
+      hit_trap = true;
+      // update the old value
+      wp->old_val = new_val;
+    }
+    // go on to the next watchpoint
+    wp = wp->front;
+  }
+  return hit_trap;
+}
