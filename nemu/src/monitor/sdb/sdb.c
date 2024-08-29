@@ -223,7 +223,7 @@ static int cmd_info(char *args) {
   else if (strcmp(argv[0], "w") == 0) {
 #ifndef CONFIG_WATCHPOINT
     printf("Watchpoint not enabled, please change the configuration by execute 'make menuconfig'\n");
-#elif
+#else
     print_wp();
 #endif
   }
@@ -305,7 +305,7 @@ static int cmd_p(char *args) {
 static int cmd_w(char *args) {
 #ifndef CONFIG_WATCHPOINT
   printf("Watchpoint not enabled, please change the configuration by execute 'make menuconfig'\n");
-#elif
+#else
   bool success = true;
   // TODO filter the const value
   word_t val = expr(args, &success);
@@ -326,7 +326,7 @@ error:
 static int cmd_d(char *args) {
 #ifndef CONFIG_WATCHPOINT
   printf("Watchpoint not enabled, please change the configuration by execute 'make menuconfig'\n");
-#elif
+#else
   char **argv = NULL;
   int argc = extract_args(args, &argv);
   // TODO support only one ID now
