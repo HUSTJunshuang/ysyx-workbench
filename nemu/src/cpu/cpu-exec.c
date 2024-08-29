@@ -42,12 +42,13 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+#ifdef CONFIG_WATCHPOINT
   if (check_wp()) {
     nemu_state.state = NEMU_STOP;
     uint32_t next_inst = paddr_read(cpu.pc, 4);
-    printf(ANSI_FMT(FMT_WORD ":", ANSI_FG_BLUE) "0x%08x\n", cpu.pc, next_inst);
-    printf("TBD, print the next instruction.\n");
+    printf(ANSI_FMT(FMT_WORD ":", ANSI_FG_BLUE) "\t0x%08x\n", cpu.pc, next_inst);
   }
+#endif
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
