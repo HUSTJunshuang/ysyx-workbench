@@ -127,6 +127,10 @@ endmenu
 menu "Testing and Debugging"
 
 
+config POST
+  bool "Enable POST(Power On Self Test)"
+  default n
+
 config TRACE
   bool "Enable tracer"
   default y
@@ -151,6 +155,9 @@ config ITRACE_COND
   string "Only trace instructions when the condition is true"
   default "true"
 
+config WATCHPOINT
+  bool "Enable watchpoint"
+  default n
 
 config DIFFTEST
   depends on TARGET_NATIVE_ELF

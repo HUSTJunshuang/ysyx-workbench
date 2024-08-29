@@ -14,6 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
+#include <utils.h>
 #include <cpu/cpu.h>
 #include <memory/paddr.h>
 #include <readline/readline.h>
@@ -69,6 +70,8 @@ static int cmd_info(char *args);
 static int cmd_x(char *args);
 static int cmd_p(char *args);
 static int cmd_help(char *args);
+static int cmd_w(char *args);
+static int cmd_d(char *args);
 
 static struct {
   const char *name;
@@ -82,7 +85,8 @@ static struct {
   { "info", "Display information about regs('info r') or wathcpoints('info w')", cmd_info },
   { "x", "Display memory content,\n\tUasge: 'x [N] ADDR', N(int) refers to scan length with a default value 1, ADDR refers to the start address, which can be a expression.", cmd_x },
   { "p", "Calculate expressions.", cmd_p },
-  /* TODO: Add more commands */
+  { "w", "Add watchpoint.", cmd_w},
+  { "d", "Delete watchpoint by the id,\n\tUsage: 'd ID0 ... IDx', ID(int) refers to the watchpoint id to be deleted.", cmd_d}
 
 };
 
@@ -139,8 +143,11 @@ void init_sdb() {
 
 
 
-/* Function Implementations */
+/* ---------- Function Implementations ---------- */
 static int cmd_c(char *args) {
+  if (nemu_state.state != NEMU_END && nemu_state.state != NEMU_ABORT) {
+    printf("Continuing.\n");
+  }
   cpu_exec(-1);
   return 0;
 }
@@ -206,16 +213,19 @@ error:
 static int cmd_info(char *args) {
   char **argv = NULL;
   int argc = extract_args(args, &argv);
-
   if (argc != 1) {
     goto error;
   }
+
   if (strcmp(argv[0], "r") == 0) {
     isa_reg_display();
   }
   else if (strcmp(argv[0], "w") == 0) {
-    // TODO print watchpoint
-    printf("TBD\n");
+#ifndef CONFIG_WATCHPOINT
+    printf("Watchpoint not enabled, please change the configuration by execute 'make menuconfig'\n");
+#else
+    print_wp();
+#endif
   }
   else {
     goto error;
@@ -289,5 +299,50 @@ static int cmd_p(char *args) {
   bool success = true;
   word_t result = expr(args, &success);
   if (success) printf("%ld(%lu)\n", result, result);
+  return 0;
+}
+
+static int cmd_w(char *args) {
+#ifndef CONFIG_WATCHPOINT
+  printf("Watchpoint not enabled, please change the configuration by execute 'make menuconfig'\n");
+#else
+  bool success = true;
+  // TODO filter the const value
+  word_t val = expr(args, &success);
+  if (!success){
+    printf(ANSI_FMT("Error: ", ANSI_FG_RED) "Expression evaluation faild.\n");
+    goto error;
+  }
+  WP *wp = new_wp();
+  if (wp == NULL) goto error;
+  wp->expression = strdup(args);
+  wp->old_val = val;
+  printf("Watchpoint %d: %s\n", wp->NO, args);
+error:
+#endif
+  return 0;
+}
+
+static int cmd_d(char *args) {
+#ifndef CONFIG_WATCHPOINT
+  printf("Watchpoint not enabled, please change the configuration by execute 'make menuconfig'\n");
+#else
+  char **argv = NULL;
+  int argc = extract_args(args, &argv);
+  // TODO support only one ID now
+  if (argc != 1) {
+    printf("Usage: 'd ID0 ... IDx', ID(int) refers to the watchpoint id to be deleted.\n");
+    goto error;
+  }
+  char *end_ptr = NULL;
+  int del_id = strtoul(argv[0], &end_ptr, 10);
+  if (argv[0] + strlen(argv[0]) != end_ptr) {
+    printf("ID (%s) not valid.\n", argv[0]);
+    goto error;
+  }
+  free_wp(del_id);
+error:
+  release_argv(argc, argv);
+#endif
   return 0;
 }

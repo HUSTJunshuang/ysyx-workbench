@@ -41,10 +41,17 @@ gdb: run-env
 	$(call git_commit, "gdb NEMU")
 	gdb -s $(BINARY) --args $(NEMU_EXEC)
 
+valgrind: run-env
+	$(call git_commit, "valgrind NEMU")
+	valgrind --leak-check=full $(NEMU_EXEC)
+
 clean-tools = $(dir $(shell find ./tools -maxdepth 2 -mindepth 2 -name "Makefile"))
 $(clean-tools):
 	-@$(MAKE) -s -C $@ clean
 clean-tools: $(clean-tools)
 clean-all: clean distclean clean-tools
 
-.PHONY: run gdb run-env clean-tools clean-all $(clean-tools)
+count:
+	@find . -name "*.[ch]" -exec bash -c 'grep -v "^$$" {} | wc -l' \; | awk '{total += $$1} END {print total}'
+
+.PHONY: run gdb run-env clean-tools clean-all $(clean-tools) count

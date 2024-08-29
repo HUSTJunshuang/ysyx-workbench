@@ -28,7 +28,6 @@ enum {
   TK_LAND, TK_LOR,
   TK_REG, TK_PTR,
   TK_NEG, TK_NUM,
-  /* TODO: Add more token types */
 
 };
 
@@ -37,9 +36,7 @@ static struct rule {
   int token_type;
 } rules[] = {
 
-  /* TODO: Add more rules.
-   * Pay attention to the precedence level of different rules.
-   */
+  /* Pay attention to the precedence level of different rules. */
 
   {" +", TK_NOTYPE},    // spaces
   {"([1-9])([0-9])*(UL)?", TK_NUM},
@@ -97,6 +94,9 @@ static int op_ptr __attribute__((used)) = 0;
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
+  if (e == NULL){
+    return false;
+  }
   int position = 0;
   int i;
   regmatch_t pmatch;
@@ -115,7 +115,7 @@ static bool make_token(char *e) {
 
         position += substr_len;
 
-        /* TODO: Now a new token is recognized with rules[i]. Add codes
+        /* Now a new token is recognized with rules[i]. Add codes
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
@@ -229,6 +229,10 @@ word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     goto error;
   }
+  if (nr_token == 0) {
+    printf("No expression input.\n");
+    goto error;
+  }
 
   // Log("Total token number: %d", nr_token);
   // clear the pointer
@@ -279,7 +283,11 @@ word_t expr(char *e, bool *success) {
     if (!eval()) goto error;
   }
 
-  return num_stack[0];
+  if (num_ptr != 1){
+    printf("Invalid input expression.\n");
+    goto error;
+  }
+  return num_stack[num_ptr - 1];
 
 error:
   *success = false;

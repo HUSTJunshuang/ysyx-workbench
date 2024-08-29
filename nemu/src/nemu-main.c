@@ -34,8 +34,10 @@ int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
 #endif
 
+#ifdef CONFIG_POST
   /* Self check */
   func_check();
+#endif
 
   /* Start engine. */
   engine_start();
