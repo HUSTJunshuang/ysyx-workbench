@@ -51,4 +51,7 @@ $(clean-tools):
 clean-tools: $(clean-tools)
 clean-all: clean distclean clean-tools
 
-.PHONY: run gdb run-env clean-tools clean-all $(clean-tools)
+count:
+	@find . -name "*.[ch]" -exec bash -c 'grep -v "^$$" {} | wc -l' \; | awk '{total += $$1} END {print total}'
+
+.PHONY: run gdb run-env clean-tools clean-all $(clean-tools) count

@@ -45,10 +45,13 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$^
 
-clean:
+clean: clean_sta
 	rm -rf $(BUILD_DIR)
 
 # include Makefile in ysyx-workbench, for the call of git_commit
 include ../Makefile
+
+# include rules for sta
+include scripts/yosys-sta.mk
 
 .PHONY: all sim clean
