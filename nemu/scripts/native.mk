@@ -46,8 +46,8 @@ valgrind: run-env
 	valgrind --leak-check=full $(NEMU_EXEC)
 
 test: run-env
-	@echo -e "c\nq\n" | $(NEMU_EXEC)
-	# $(NEMU_EXEC) <<< "c\nq\n"
+	@printf "c\nq\n" | $(NEMU_EXEC)
+# $(NEMU_EXEC) <<< "c\nq\n"
 
 clean-tools = $(dir $(shell find ./tools -maxdepth 2 -mindepth 2 -name "Makefile"))
 $(clean-tools):
