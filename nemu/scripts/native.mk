@@ -46,8 +46,11 @@ valgrind: run-env
 	valgrind --leak-check=full $(NEMU_EXEC)
 
 test: run-env
+	$(call git_commit, "test NEMU")
 	@printf "c\nq\n" | $(NEMU_EXEC)
+# these following commands are only available in bash
 # $(NEMU_EXEC) <<< "c\nq\n"
+# echo -e "c\nq\n" | $(NEMU_EXEC)
 
 clean-tools = $(dir $(shell find ./tools -maxdepth 2 -mindepth 2 -name "Makefile"))
 $(clean-tools):
