@@ -95,6 +95,7 @@ static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
   if (e == NULL){
+    printf("No expression input.\n");
     return false;
   }
   int position = 0;
@@ -229,7 +230,6 @@ word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     goto error;
   }
-  printf("nr_token = %d\n", nr_token);
   if (nr_token == 0) {
     printf("No expression input.\n");
     goto error;
