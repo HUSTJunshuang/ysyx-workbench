@@ -229,6 +229,7 @@ word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     goto error;
   }
+  printf("nr_token = %d\n", nr_token);
   if (nr_token == 0) {
     printf("No expression input.\n");
     goto error;
