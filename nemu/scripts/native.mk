@@ -46,7 +46,7 @@ valgrind: run-env
 	$(call git_commit, "valgrind NEMU")
 	valgrind --leak-check=full $(NEMU_EXEC)
 
-test: ARGS +=-b
+test: ARGS += -b
 test: run-env
 	$(call git_commit, "test NEMU")
 # nemu's batch mode supports to run directly without input 'c'
