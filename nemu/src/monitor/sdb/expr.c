@@ -95,6 +95,7 @@ static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
   if (e == NULL){
+    printf("No expression input.\n");
     return false;
   }
   int position = 0;
