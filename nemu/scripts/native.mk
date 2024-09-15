@@ -47,7 +47,9 @@ valgrind: run-env
 
 test: run-env
 	$(call git_commit, "test NEMU")
-	@printf "c\nq\n" | $(NEMU_EXEC)
+# nemu's batch mode supports to run directly without input 'c'
+	$(NEMU_EXEC) -b
+#@printf "c\nq\n" | $(NEMU_EXEC)
 # these following commands are only available in bash
 # $(NEMU_EXEC) <<< "c\nq\n"
 # echo -e "c\nq\n" | $(NEMU_EXEC)
