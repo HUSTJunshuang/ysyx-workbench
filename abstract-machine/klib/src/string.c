@@ -68,7 +68,7 @@ int strncmp(const char *s1, const char *s2, size_t n) {
   return ascii_diff;
 }
 
-// TODO use max length type instead of char to exploit the length of CPU's reg(word length)
+// TODO use max length type instead of char to exploit the data width of CPU's reg(word length)
 void *memset(void *s, int c, size_t n) {
   for (size_t i = 0; i < n; i++) {
     ((char *)s)[i] = c;
