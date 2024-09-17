@@ -63,7 +63,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
     }
     out[size] = '\0';
   }
-  return size;
+  // return size;
   panic("Not implemented");
 }
 
