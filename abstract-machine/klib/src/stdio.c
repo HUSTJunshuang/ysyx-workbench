@@ -53,6 +53,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
         size += itoa(d, dstr);
         strcat(out, dstr);
         if (dstr[0] != '1') panic("dstr[0] != 1");
+        if (dstr[1] != '\0') panic("dstr[1] != \0");
         break;
       }
     }
