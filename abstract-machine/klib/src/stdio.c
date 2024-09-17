@@ -42,7 +42,8 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   // clear out
   *out = '\0';
   while (fmt[fmt_ptr]) {
-    if (fmt[fmt_ptr++] == '%') {
+    if (fmt[fmt_ptr] == '%') {
+      fmt_ptr++;
       switch (fmt[fmt_ptr++]) {
       case '%':
         out[size++] = '%';
