@@ -54,7 +54,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
         // char dstr[16];
         size += itoa(d, dstr);
         strcat(out, dstr);
-        panic(dstr);
+        // panic(dstr);
         break;
       }
     }
