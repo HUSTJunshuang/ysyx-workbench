@@ -35,6 +35,8 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   char dstr[16];
   int size = 0;
 
+  // clear out
+  *out = '\0';
   while (fmt[fmt_ptr]) {
     if (fmt[fmt_ptr++] == '%') {
       switch (fmt[fmt_ptr++]) {
