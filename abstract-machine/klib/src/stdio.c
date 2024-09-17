@@ -32,6 +32,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   size_t fmt_ptr = 0;
   int d;
   char *s;
+  char dstr[16];
   int size = 0;
 
   while (fmt[fmt_ptr]) {
@@ -48,7 +49,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
       case 'd':
         d = va_arg(ap, int);
         // convert int to string
-        char dstr[16];
+        // char dstr[16];
         size += itoa(d, dstr);
         strcat(out, dstr);
         // putstr(dstr);
