@@ -11,7 +11,7 @@ int printf(const char *fmt, ...) {
 
 // itoa function, for temporary use
 void reverse(char *s, int len) {
-  for (int i = 0; i < len / 2 - 1; i++) {
+  for (int i = 0; i < len / 2; i++) {
     char tmp = s[len - i - 1];
     s[len - i - 1] = s[i];
     s[i] = tmp;
@@ -34,8 +34,6 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   char *s;
   int size = 0;
 
-  // clear out
-  *out = '\0';
   while (fmt[fmt_ptr]) {
     if (fmt[fmt_ptr++] == '%') {
       switch (fmt[fmt_ptr++]) {
