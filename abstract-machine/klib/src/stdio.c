@@ -40,7 +40,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   int size = 0;
 
   // clear out
-  *out = '\0';
+  // *out = '\0';
   while (fmt[fmt_ptr]) {
     if (fmt[fmt_ptr] == '%') {
       fmt_ptr++;
