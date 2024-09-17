@@ -54,7 +54,6 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
         // char dstr[16];
         size += itoa(d, dstr);
         strcat(out, dstr);
-        // panic(dstr);
         break;
       }
     }
@@ -63,8 +62,8 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
     }
     out[size] = '\0';
   }
-  // return size;
-  panic("Not implemented");
+  return size;
+  // panic("Not implemented");
 }
 
 int sprintf(char *out, const char *fmt, ...) {
