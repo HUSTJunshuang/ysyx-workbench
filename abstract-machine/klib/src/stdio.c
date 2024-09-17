@@ -18,6 +18,11 @@ void reverse(char *s, int len) {
   }
 }
 int itoa(int num, char *s) {
+  if (num == 0) {
+    s[0] = '0';
+    s[1] = '\0';
+    return 1;
+  }
   int len = 0;
   while (num) {
     s[len++] = '0' + (num % 10);
