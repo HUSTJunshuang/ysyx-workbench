@@ -146,7 +146,7 @@ void init_sdb() {
 /* ---------- Function Implementations ---------- */
 static int cmd_c(char *args) {
   if (nemu_state.state != NEMU_END && nemu_state.state != NEMU_ABORT) {
-    printf("Continuing.\n");
+    if (!is_batch_mode) printf("Continuing.\n");
   }
   cpu_exec(-1);
   return 0;

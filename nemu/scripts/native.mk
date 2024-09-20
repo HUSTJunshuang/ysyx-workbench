@@ -29,7 +29,8 @@ override ARGS += $(ARGS_DIFF)
 
 # Command to execute NEMU
 IMG ?=
-NEMU_EXEC := $(BINARY) $(ARGS) $(IMG)
+# changed from := to =, to update ARGS in target "test"
+NEMU_EXEC = $(BINARY) $(ARGS) $(IMG)
 
 run-env: $(BINARY) $(DIFF_REF_SO)
 
@@ -45,9 +46,12 @@ valgrind: run-env
 	$(call git_commit, "valgrind NEMU")
 	valgrind --leak-check=full $(NEMU_EXEC)
 
+test: ARGS += -b
 test: run-env
 	$(call git_commit, "test NEMU")
-	@printf "c\nq\n" | $(NEMU_EXEC)
+# nemu's batch mode supports to run directly without input 'c'
+	$(NEMU_EXEC)
+#@printf "c\nq\n" | $(NEMU_EXEC)
 # these following commands are only available in bash
 # $(NEMU_EXEC) <<< "c\nq\n"
 # echo -e "c\nq\n" | $(NEMU_EXEC)
