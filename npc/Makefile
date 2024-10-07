@@ -52,7 +52,7 @@ run: $(BIN)
 	@$^
 
 $(SIM): $(VSRCS) $(SIMSRC)
-	$(VERILATOR) $(VERILATOR_CFLAGS) --top-module $(TOPNAME) --Mdir $(SIM_DIR) --exe --trace-fst $(SIMSRC) $(VSRCS)
+	$(VERILATOR) $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $^ --Mdir $(SIM_DIR) --exe --trace-fst
 
 sim: $(SIM)
 	$(call git_commit, "sim RTL")
