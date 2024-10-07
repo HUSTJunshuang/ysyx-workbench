@@ -22,7 +22,7 @@ $(SRC_AUTO_BIND): $(NXDC_FILES)
 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
 
 # project source
-VSRCS = $(wildcard vsrc/*.v)
+VSRCS = $(shell find $(abspath ./vsrc) -name "*.v" -or -name "*.sv" -or -name "*.vh")
 # the csrc need to use abspath, because the make will enter directory './build/obj_dir' and can't find csrc/*.c
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
 CSRCS += $(SRC_AUTO_BIND)
@@ -39,11 +39,14 @@ $(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
-		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+		--Mdir $(OBJ_DIR) -Ivsrc --exe -o $(abspath $(BIN))
 
-sim: $(BIN)
-	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+run: $(BIN)
+	$(call git_commit, "run NVBoard") # DO NOT REMOVE THIS LINE!!!
 	@$^
+
+sim: $(VSRCS) sim.cpp
+	verilator -Ivsrc --Mdir ./build/sim_dir --cc --exe --build --top-module top --trace-fst sim.cpp $(VSRCS)
 
 clean: clean_sta
 	rm -rf $(BUILD_DIR)
