@@ -19,6 +19,14 @@ static void single_cycle() {
     top->clk = 1; top->eval(); tfp->dump(cp->time());
 }
 
+static void reset(int cycles) {
+    top->rst = 1;
+    for (int i = 0; i < cycles; i++) {
+        single_cycle();
+    }
+    top->rst = 0;
+}
+
 int main() {
     // define context pointer and top module pointer
 	cp = new VerilatedContext;
@@ -36,6 +44,7 @@ int main() {
         inst_mem[i] = 0x00208093;
     }
 
+    reset(10);
     while (inst_cnt < MAX_INST) {
         top->inst = inst_mem[inst_cnt++];
         single_cycle();
