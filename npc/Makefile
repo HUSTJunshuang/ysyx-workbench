@@ -15,8 +15,8 @@ WAVES_DIR = ./waves
 BIN = $(BUILD_DIR)/$(TOPNAME)
 SIM = $(SIM_DIR)/V$(TOPNAME)
 
-all: $(BIN)
-	@echo "Finished compiling, run \"make sim\" to simulate."
+all: $(BIN) $(SIM)
+	@echo "Finished compiling, run \"make sim\" to simulate or \"make run\" to run NVBoard."
 
 # make the BUILD_DIR, excute in sequence?
 $(shell mkdir -p $(BUILD_DIR))
@@ -57,7 +57,7 @@ $(SIM): $(VSRCS) $(SIMSRC)
 sim: $(SIM)
 	$(call git_commit, "sim RTL")
 	@$^
-	$(GTKWAVE) $(WAVES_DIR)/sim.vcd
+	@$(GTKWAVE) $(WAVES_DIR)/sim.vcd
 
 clean: clean_sta
 	rm -rf $(BUILD_DIR) $(WAVES_DIR)
