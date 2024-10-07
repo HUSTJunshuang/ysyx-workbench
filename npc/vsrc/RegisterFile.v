@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-`include "inc/core.v"
+`include "inc/core.vh"
 
 module `JJS_STUID``_RegisterFile #(
     parameter XLEN = `ysyx_24090011_XLEN,
