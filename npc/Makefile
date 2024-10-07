@@ -16,7 +16,7 @@ BIN = $(BUILD_DIR)/$(TOPNAME)
 SIM = $(SIM_DIR)/V$(TOPNAME)
 
 all: $(BIN) $(SIM)
-	@echo "Finished compiling, run \"make sim\" to simulate or \"make run\" to run NVBoard."
+	@echo "\033[1;32mFinished compiling, run \"make sim\" to simulate or \"make run\" to run NVBoard.\033[0m"
 
 # make the BUILD_DIR, excute in sequence?
 $(shell mkdir -p $(BUILD_DIR))
