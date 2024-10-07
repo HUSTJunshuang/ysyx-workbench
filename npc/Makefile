@@ -57,7 +57,7 @@ $(SIM): $(VSRCS) $(SIMSRC)
 sim: $(SIM)
 	$(call git_commit, "sim RTL")
 	@$^
-	$(GTKWAVE) $(WAVES_DIR)
+	$(GTKWAVE) $(WAVES_DIR)/sim.vcd
 
 clean: clean_sta
 	rm -rf $(BUILD_DIR) $(WAVES_DIR)
