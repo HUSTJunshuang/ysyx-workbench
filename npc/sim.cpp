@@ -28,8 +28,8 @@ int main() {
 	tfp = new VerilatedFstC;
 	// set trace level and output file
 	top->trace(tfp, 3);
-	Verilated::mkdir("logs");
-	tfp->open("logs/sim.vcd");
+	Verilated::mkdir("waves");
+	tfp->open("waves/sim.vcd");
 
     // fill instruction memory
     for (int i = 0; i < MAX_INST; i++) {
