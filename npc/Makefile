@@ -10,7 +10,7 @@ GTKWAVE = gtkwave
 
 BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
-SIM_DIR = $(BUILD_DIR)/sim_dir
+SIM_DIR = sim_dir
 WAVES_DIR = ./waves
 BIN = $(BUILD_DIR)/$(TOPNAME)
 SIM = $(SIM_DIR)/V$(TOPNAME)
@@ -30,6 +30,7 @@ $(SRC_AUTO_BIND): $(NXDC_FILES)
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v" -or -name "*.sv" -or -name "*.vh")
 # the csrc need to use abspath, because the make will enter directory './build/obj_dir' and can't find csrc/*.c
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+# TODO create a directory sim/ if necessary
 SIMSRC = $(abspath ./sim.cpp)
 CSRCS += $(SRC_AUTO_BIND)
 
