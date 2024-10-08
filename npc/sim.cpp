@@ -3,14 +3,28 @@
 #include <assert.h>
 #include "Vtop.h"
 #include "verilated_fst_c.h"
+// for DPI-C
+#include "svdpi.h"
+#include "Vtop__Dpi.h"
 
 VerilatedContext* cp;
 Vtop* top;
 VerilatedFstC *tfp;
 
-const int MAX_INST = 10;
+// cpu status
+// CHECK need how many status
+enum { NEMU_RUNNING, NEMU_STOP, NEMU_END, NEMU_ABORT, NEMU_QUIT };
+int nemu_state = 0;
+
+const int MAX_INST = 100;
 int inst_mem[MAX_INST];
 int inst_cnt = 0;
+
+// DPI-C functions
+void set_nemu_state(int state) {
+    nemu_state = state;
+    return ;
+}
 
 static void single_cycle() {
     cp->timeInc(5);
@@ -40,12 +54,14 @@ int main() {
 	tfp->open("waves/sim.vcd");
 
     // fill instruction memory
-    for (int i = 0; i < MAX_INST; i++) {
+    for (int i = 0; i < 10; i++) {
+        assert(i < MAX_INST);
         inst_mem[i] = 0x00208093;
     }
+    inst_mem[10] = 0x00100073;
 
     reset(10);
-    while (inst_cnt < MAX_INST) {
+    while (nemu_state == NEMU_RUNNING) {
         top->inst = inst_mem[inst_cnt++];
         single_cycle();
     }
