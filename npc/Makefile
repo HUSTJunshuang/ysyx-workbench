@@ -4,7 +4,7 @@ NXDC_FILES = constr/$(TOPNAME).nxdc
 INC_PATH ?=
 
 VERILATOR = verilator
-VERILATOR_CFLAGS += -MMD --build --cc -O3 --x-assign fast --x-initial fast --noassert -Ivsrc --debug
+VERILATOR_CFLAGS += -MMD --build --cc -O3 --x-assign fast --x-initial fast --noassert -Ivsrc
 
 GTKWAVE = gtkwave
 

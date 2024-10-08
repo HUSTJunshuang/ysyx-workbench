@@ -57,7 +57,7 @@ int main() {
     for (int i = 0; i < MAX_INST - 1; i++) {
         inst_mem[i] = 0x00208093;
     }
-    inst_mem[MAX_INST - 1] = 0x00100073;
+    inst_mem[MAX_INST - 2] = 0x00100073;
 
     reset(10);
     while (nemu_state == NEMU_RUNNING) {
