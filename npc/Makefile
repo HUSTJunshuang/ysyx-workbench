@@ -1,10 +1,10 @@
 # can be changed by make -e 'TOPNAME=<your_top_name>, BUT the #include <Vtop.h> in main.cpp should be changed too
 TOPNAME = top
 NXDC_FILES = constr/$(TOPNAME).nxdc
-INC_PATH ?= vsrc
+INC_PATH ?=
 
 VERILATOR = verilator
-VERILATOR_CFLAGS += -MMD --build --cc -O3 --x-assign fast --x-initial fast --noassert
+VERILATOR_CFLAGS += -MMD --build --cc -O3 --x-assign fast --x-initial fast --noassert -Ivsrc
 
 GTKWAVE = gtkwave
 
