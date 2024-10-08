@@ -21,7 +21,7 @@ int inst_mem[MAX_INST];
 int inst_cnt = 0;
 
 // DPI-C functions
-extern "C" void set_nemu_state(int state) {
+void set_nemu_state(int state) {
     nemu_state = state;
     return ;
 }
