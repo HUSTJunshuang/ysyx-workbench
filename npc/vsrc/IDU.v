@@ -39,7 +39,7 @@ module `JJS_STUID``_IDU #(
             7'b01100_11: begin  // R-type
                 imm = 'h0;
             end
-            7'b00000_11, 7'b00100_11, 7'b11001_11: begin    // I-type
+            7'b00000_11, 7'b00100_11, 7'b11001_11, 7'b11100_11: begin    // I-type
                 imm = {{(XLEN - 12){inst[31]}}, inst[31 : 20]};
             end
             7'b01000_11: begin  // S-type
