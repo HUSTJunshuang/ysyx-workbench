@@ -27,10 +27,10 @@ void set_nemu_state(int state) {
 }
 
 static void single_cycle() {
-    cp->timeInc(5);
+    
     top->clk = 0; top->eval(); tfp->dump(cp->time());
     cp->timeInc(5);
-    top->clk = 1; top->eval(); tfp->dump(cp->time());
+    top->clk = 1; top->eval(); tfp->dump(cp->time());cp->timeInc(5);
 }
 
 static void reset(int cycles) {
