@@ -38,31 +38,23 @@ module `JJS_STUID``_EXU #(
             7'b11100_11: begin
                 case (funct3)
                     3'b000: begin
-                        if (imm[0]) begin
-                            // ebreak
+                        if (imm[0]) begin   // ebreak
                             set_nemu_state(2);
                         end
-                        else begin
-                            // ecall
+                        else begin  // ecall
                         end
                     end
-                    // csrrw
-                    3'b001: begin
+                    3'b001: begin   // csrrw
                     end
-                    // csrrs
-                    3'b010: begin
+                    3'b010: begin   // csrrs
                     end
-                    // csrrc
-                    3'b011: begin
+                    3'b011: begin   // csrrc
                     end
-                    // csrrwi
-                    3'b101: begin
+                    3'b101: begin   // csrrwi
                     end
-                    // csrrsi
-                    3'b110: begin
+                    3'b110: begin   // csrrsi
                     end
-                    // csrrci
-                    3'b111: begin
+                    3'b111: begin   // csrrci
                     end
                     default: begin
                     end
