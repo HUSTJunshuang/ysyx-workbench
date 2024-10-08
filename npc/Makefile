@@ -10,7 +10,7 @@ GTKWAVE = gtkwave
 
 BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
-SIM_DIR = sim_dir
+SIM_DIR = $(BUILD_DIR)/sim_dir
 WAVES_DIR = ./waves
 BIN = $(BUILD_DIR)/$(TOPNAME)
 SIM = $(SIM_DIR)/V$(TOPNAME)
