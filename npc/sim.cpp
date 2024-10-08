@@ -60,7 +60,7 @@ int main() {
     inst_mem[MAX_INST - 2] = 0x00100073;
 
     reset(10);
-    while (nemu_state == NEMU_RUNNING) {
+    while (nemu_state == NEMU_RUNNING && inst_cnt < MAX_INST) {
         top->inst = inst_mem[inst_cnt++];
         single_cycle();
     }
