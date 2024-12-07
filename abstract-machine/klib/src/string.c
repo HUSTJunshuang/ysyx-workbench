@@ -21,7 +21,7 @@ char *strcpy(char *dst, const char *src) {
     dst[len] = src[len];
     len++;
   }
-  // dst[len] = '\0';
+  dst[len] = '\0';
   return dst;
 }
 
