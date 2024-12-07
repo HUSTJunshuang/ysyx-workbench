@@ -49,6 +49,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     printf(ANSI_FMT(FMT_WORD ":", ANSI_FG_BLUE) "\t0x%08x\n", cpu.pc, next_inst);
   }
 #endif
+  // TODO itrace: add instruction to ringbuf
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
@@ -103,6 +104,7 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
+  // TODO itrace: printf itrace
   isa_reg_display();
   statistic();
 }
