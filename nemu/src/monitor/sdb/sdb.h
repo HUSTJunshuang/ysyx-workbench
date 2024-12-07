@@ -33,4 +33,12 @@ void free_wp(int wp_id);
 void print_wp();
 bool check_wp();
 
+typedef struct iringbuf {
+  const int size;
+  vaddr_t *pc_buf;
+  // max instruction length: x86 -> 8B, others -> 4B
+  MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) *inst_buf;
+  int rptr, wptr;
+} iRB;
+
 #endif
