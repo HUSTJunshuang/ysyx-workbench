@@ -43,6 +43,7 @@ void print_iRB(vaddr_t pc) {
             printf("%02x ", inst[j]);
         }
         printf("\n");
+        printf("%6s" FMT_WORD ": %s.", "", iringbuf.pc_buf[rptr], str_buf);
         rptr = (rptr + 1) % iringbuf.capacity;
     }
     // error instruction
