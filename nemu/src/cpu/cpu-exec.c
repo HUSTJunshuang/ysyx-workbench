@@ -116,6 +116,7 @@ void assert_fail_msg() {
   print_iRB(cpu.pc);
   destory_iRB();
 #endif
+  printf("Dumping register values:\n");
   isa_reg_display();
   statistic();
 }
