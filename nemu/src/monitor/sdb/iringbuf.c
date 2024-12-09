@@ -41,6 +41,7 @@ void print_iRB(vaddr_t pc) {
     int rptr = (iringbuf.wptr + iringbuf.capacity - iringbuf.size) % iringbuf.capacity;
     uint8_t *inst;
     printf(ANSI_FMT("Encountered an error while executing the following snippets:\n", ANSI_FG_RED));
+    printf("%6s......\n", "");
     // instructions executed
     for (int i = 0; i < iringbuf.size; ++i) {
         inst = (uint8_t *)&iringbuf.inst_buf[rptr];
