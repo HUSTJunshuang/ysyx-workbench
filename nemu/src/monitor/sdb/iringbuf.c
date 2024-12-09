@@ -1,3 +1,4 @@
+#include <memory/paddr.h>
 #include "sdb.h"
 
 // for disassemble
@@ -29,7 +30,7 @@ void push_iRB(vaddr_t pc, MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst) {
     return ;
 }
 
-void print_iRB() {
+void print_iRB(vaddr_t pc) {
     int rptr = (iringbuf.wptr + iringbuf.capacity - iringbuf.size) % iringbuf.capacity;
     printf("iringbuf.size = %d, wptr = %d, rptr = %d\n", iringbuf.size, iringbuf.wptr, rptr);
     // instructions executed
@@ -38,8 +39,16 @@ void print_iRB() {
         printf("%6s" FMT_WORD ": %s\n", "", iringbuf.pc_buf[rptr], str_buf);
         rptr = (rptr + 1) % iringbuf.capacity;
     }
+    // error instruction
+    MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst = paddr_read(pc, 4);
+    disassemble(str_buf, sizeof(str_buf), pc, (uint8_t *)&inst, 4);
+    printf("  --> " FMT_WORD ": %s\n", pc, str_buf);
     // instructions behind
-    // for (int i = 0; i < TAIL_LEN; ++i) {}
+    for (int i = 0; i < TAIL_LEN; ++i) {
+        inst = paddr_read(++pc, 4);
+        disassemble(str_buf, sizeof(str_buf), pc, (uint8_t *)&inst, 4);
+        printf("%6s" FMT_WORD ": %s\n", "", pc, str_buf);
+    }
 }
 
 void destory_iRB() {

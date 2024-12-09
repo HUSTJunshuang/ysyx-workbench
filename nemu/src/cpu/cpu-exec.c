@@ -36,7 +36,7 @@ void device_update();
 
 bool check_wp();
 void push_iRB(vaddr_t pc, MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst);
-void print_iRB();
+void print_iRB(vaddr_t pc);
 void destory_iRB();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
@@ -113,8 +113,7 @@ static void statistic() {
 
 void assert_fail_msg() {
 #ifdef CONFIG_ITRACE
-  printf("cpu.pc = 0x%16lx\n", cpu.pc);
-  print_iRB();
+  print_iRB(cpu.pc);
   destory_iRB();
 #endif
   isa_reg_display();
