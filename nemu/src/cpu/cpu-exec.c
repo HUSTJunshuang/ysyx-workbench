@@ -110,8 +110,10 @@ static void statistic() {
 
 void assert_fail_msg() {
   // TODO itrace: printf itrace
+  #ifdef CONFIG_ITRACE
   print_iRB();
   destory_iRB();
+  #endif
   isa_reg_display();
   statistic();
 }

@@ -141,6 +141,11 @@ void init_sdb() {
   #ifdef CONFIG_WATCHPOINT
   init_wp_pool();
   #endif
+
+  /* Initialize the instruction ringbuffer. */
+  #ifdef CONFIG_ITRACE
+  init_iRB();
+  #endif
 }
 
 
