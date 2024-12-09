@@ -35,6 +35,9 @@ static bool g_print_step = false;
 void device_update();
 
 bool check_wp();
+void push_iRB(vaddr_t pc, MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst);
+void print_iRB();
+void destory_iRB();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -72,6 +75,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
+  // push to iringbuf
+  push_iRB(s->pc, s->isa.inst.val);
 
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -105,6 +110,8 @@ static void statistic() {
 
 void assert_fail_msg() {
   // TODO itrace: printf itrace
+  print_iRB();
+  destory_iRB();
   isa_reg_display();
   statistic();
 }
