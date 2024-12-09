@@ -113,6 +113,7 @@ static void statistic() {
 
 void assert_fail_msg() {
 #ifdef CONFIG_ITRACE
+  printf("cpu.pc = 0x%16lx\n", cpu.pc);
   print_iRB();
   destory_iRB();
 #endif
