@@ -48,23 +48,23 @@ void print_iRB(vaddr_t pc) {
     // error instruction
     MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst_val = paddr_read(pc, ilen);
     inst = (uint8_t *)&inst_val;
-    disassemble(str_buf, sizeof(str_buf), pc, inst, ilen);
-    printf("  --> " FMT_WORD ": %s.", pc, str_buf);
+    printf("  --> " FMT_WORD ":", pc);
     for (int i = ilen - 1; i >= 0; --i) {
         printf("%02x ", inst[i]);
     }
-    printf("\n");
+    disassemble(str_buf, sizeof(str_buf), pc, inst, ilen);
+    printf("\t%s\n", str_buf);
     // instructions behind
     for (int i = 0; i < TAIL_LEN; ++i) {
         pc += ilen;
         inst_val = paddr_read(pc, ilen);
         inst = (uint8_t *)&inst_val;
-        disassemble(str_buf, sizeof(str_buf), pc, inst, ilen);
-        printf("%6s" FMT_WORD ": %s.", "", pc, str_buf);
+        printf("%6s" FMT_WORD ":", "", pc);
         for (int j = ilen - 1; j >= 0; --j) {
             printf("%02x ", inst[j]);
         }
-        printf("\n");
+        disassemble(str_buf, sizeof(str_buf), pc, inst, ilen);
+        printf("\t%s\n", str_buf);
     }
 }
 
