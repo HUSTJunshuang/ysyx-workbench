@@ -45,7 +45,8 @@ void print_iRB(vaddr_t pc) {
     printf("  --> " FMT_WORD ": %s\n", pc, str_buf);
     // instructions behind
     for (int i = 0; i < TAIL_LEN; ++i) {
-        inst = paddr_read(++pc, 4);
+        pc += 4;
+        inst = paddr_read(pc, 4);
         disassemble(str_buf, sizeof(str_buf), pc, (uint8_t *)&inst, 4);
         printf("%6s" FMT_WORD ": %s\n", "", pc, str_buf);
     }
