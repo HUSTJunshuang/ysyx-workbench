@@ -112,12 +112,10 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
-  // TODO itrace: printf itrace
-  #ifdef CONFIG_ITRACE
-  printf("开了指令踪迹\n");
+#ifdef CONFIG_ITRACE
   print_iRB();
   destory_iRB();
-  #endif
+#endif
   isa_reg_display();
   statistic();
 }

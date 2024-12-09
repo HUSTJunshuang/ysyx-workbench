@@ -3,7 +3,8 @@
 // for disassemble
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
-#define iRB_CAP 16
+#define iRB_CAP 8
+#define TAIL_LEN 8
 
 static iRB iringbuf = {iRB_CAP};
 char str_buf[128];
@@ -31,11 +32,14 @@ void push_iRB(vaddr_t pc, MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst) {
 void print_iRB() {
     int rptr = (iringbuf.wptr + iringbuf.capacity - iringbuf.size) % iringbuf.capacity;
     printf("iringbuf.size = %d, wptr = %d, rptr = %d\n", iringbuf.size, iringbuf.wptr, rptr);
+    // instructions executed
     for (int i = 0; i < iringbuf.size; ++i) {
         disassemble(str_buf, sizeof(str_buf), iringbuf.pc_buf[rptr], (uint8_t *)(iringbuf.inst_buf + rptr), 4);
         printf("%6s" FMT_WORD ": %s\n", "", iringbuf.pc_buf[rptr], str_buf);
         rptr = (rptr + 1) % iringbuf.capacity;
     }
+    // instructions behind
+    // for (int i = 0; i < TAIL_LEN; ++i) {}
 }
 
 void destory_iRB() {
