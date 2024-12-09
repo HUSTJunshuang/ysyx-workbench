@@ -37,20 +37,19 @@ void print_iRB(vaddr_t pc) {
     // instructions executed
     for (int i = 0; i < iringbuf.size; ++i) {
         inst = (uint8_t *)&iringbuf.inst_buf[rptr];
-        disassemble(str_buf, sizeof(str_buf), iringbuf.pc_buf[rptr], inst, ilen);
-        printf("%6s" FMT_WORD ": %-30s.", "", iringbuf.pc_buf[rptr], str_buf);
+        printf("%6s" FMT_WORD ":", "", iringbuf.pc_buf[rptr]);
         for (int j = ilen - 1; j >= 0; --j) {
-            printf("%02x ", inst[j]);
+            printf(" %02x", inst[j]);
         }
-        printf("\n");
-        printf("%6s" FMT_WORD ": %s.\n", "", iringbuf.pc_buf[rptr], str_buf);
+        disassemble(str_buf, sizeof(str_buf), iringbuf.pc_buf[rptr], inst, ilen);
+        printf("\t%s\n", str_buf);
         rptr = (rptr + 1) % iringbuf.capacity;
     }
     // error instruction
     MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst_val = paddr_read(pc, ilen);
     inst = (uint8_t *)&inst_val;
     disassemble(str_buf, sizeof(str_buf), pc, inst, ilen);
-    printf("  --> " FMT_WORD ": %-30s.", pc, str_buf);
+    printf("  --> " FMT_WORD ": %s.", pc, str_buf);
     for (int i = ilen - 1; i >= 0; --i) {
         printf("%02x ", inst[i]);
     }
@@ -61,7 +60,7 @@ void print_iRB(vaddr_t pc) {
         inst_val = paddr_read(pc, ilen);
         inst = (uint8_t *)&inst_val;
         disassemble(str_buf, sizeof(str_buf), pc, inst, ilen);
-        printf("%6s" FMT_WORD ": %-30s.", "", pc, str_buf);
+        printf("%6s" FMT_WORD ": %s.", "", pc, str_buf);
         for (int j = ilen - 1; j >= 0; --j) {
             printf("%02x ", inst[j]);
         }
