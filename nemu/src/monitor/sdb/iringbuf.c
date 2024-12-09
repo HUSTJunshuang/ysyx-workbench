@@ -3,6 +3,12 @@
 
 // for disassemble
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+// print instruction
+inline void display_inst(uint8_t * inst, int ilen) {
+    for (int i = ilen - 1; i >= 0; --i) {
+        printf(" %02x", inst[i]);
+    }
+}
 
 #define iRB_CAP 8
 #define TAIL_LEN 4
@@ -38,9 +44,7 @@ void print_iRB(vaddr_t pc) {
     for (int i = 0; i < iringbuf.size; ++i) {
         inst = (uint8_t *)&iringbuf.inst_buf[rptr];
         printf("%6s" FMT_WORD ":", "", iringbuf.pc_buf[rptr]);
-        for (int j = ilen - 1; j >= 0; --j) {
-            printf(" %02x", inst[j]);
-        }
+        display_inst(inst, ilen);
         disassemble(str_buf, sizeof(str_buf), iringbuf.pc_buf[rptr], inst, ilen);
         printf("\t%s\n", str_buf);
         rptr = (rptr + 1) % iringbuf.capacity;
@@ -50,7 +54,7 @@ void print_iRB(vaddr_t pc) {
     inst = (uint8_t *)&inst_val;
     printf("  --> " FMT_WORD ":", pc);
     for (int i = ilen - 1; i >= 0; --i) {
-        printf("%02x ", inst[i]);
+        printf(" %02x", inst[i]);
     }
     disassemble(str_buf, sizeof(str_buf), pc, inst, ilen);
     printf("\t%s\n", str_buf);
@@ -61,7 +65,7 @@ void print_iRB(vaddr_t pc) {
         inst = (uint8_t *)&inst_val;
         printf("%6s" FMT_WORD ":", "", pc);
         for (int j = ilen - 1; j >= 0; --j) {
-            printf("%02x ", inst[j]);
+            printf(" %02x", inst[j]);
         }
         disassemble(str_buf, sizeof(str_buf), pc, inst, ilen);
         printf("\t%s\n", str_buf);
