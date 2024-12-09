@@ -40,7 +40,7 @@ void push_iRB(vaddr_t pc, MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst) {
 void print_iRB(vaddr_t pc) {
     int rptr = (iringbuf.wptr + iringbuf.capacity - iringbuf.size) % iringbuf.capacity;
     uint8_t *inst;
-    printf(ANSI_FMT("Encountered an error while executing the following snippets:\n", ANSI_FG_BLACK));
+    printf(ANSI_FMT("Encountered an error while executing the following snippets:\n", ANSI_FG_MAGENTA));
     printf("%6s......\n", "");
     // instructions executed
     for (int i = 0; i < iringbuf.size; ++i) {
