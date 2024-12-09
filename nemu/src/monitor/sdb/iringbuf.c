@@ -33,7 +33,7 @@ void print_iRB() {
     printf("iringbuf.size = %d, wptr = %d, rptr = %d\n", iringbuf.size, iringbuf.wptr, rptr);
     for (int i = 0; i < iringbuf.size; ++i) {
         disassemble(str_buf, sizeof(str_buf), iringbuf.pc_buf[rptr], (uint8_t *)(iringbuf.inst_buf + rptr), 4);
-        printf("%4s" FMT_WORD ": %s\n", "", iringbuf.pc_buf[rptr], str_buf);
+        printf("%6s" FMT_WORD ": %s\n", "", iringbuf.pc_buf[rptr], str_buf);
         rptr = (rptr + 1) % iringbuf.capacity;
     }
 }
