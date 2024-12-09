@@ -30,6 +30,7 @@ void push_iRB(vaddr_t pc, MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst) {
 
 void print_iRB() {
     int rptr = (iringbuf.wptr + iringbuf.capacity - iringbuf.size) % iringbuf.capacity;
+    printf("iringbuf.size = %d, wptr = %d, rptr = %d\n", iringbuf.size, iringbuf.wptr, rptr);
     for (int i = 0; i < iringbuf.size; ++i) {
         disassemble(str_buf, sizeof(str_buf), iringbuf.pc_buf[rptr], (uint8_t *)(iringbuf.inst_buf + rptr), 4);
         printf("%s\n", str_buf);
