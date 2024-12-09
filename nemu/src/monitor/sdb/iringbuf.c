@@ -5,7 +5,7 @@
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
 #define iRB_CAP 8
-#define TAIL_LEN 8
+#define TAIL_LEN 4
 
 static iRB iringbuf = {iRB_CAP};
 char str_buf[128];
