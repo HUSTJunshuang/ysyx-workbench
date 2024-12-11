@@ -112,6 +112,7 @@ void assert_fail_msg() {
   print_iRB(cpu.pc);
   destory_iRB();
 #endif
+  printf("nemu_state = %d\n", nemu_state.state);
   printf(ANSI_FMT("Dumping register values:\n", ANSI_FG_MAGENTA));
   isa_reg_display();
   statistic();
