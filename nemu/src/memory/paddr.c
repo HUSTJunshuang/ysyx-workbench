@@ -55,7 +55,7 @@ word_t paddr_read(paddr_t addr, int len) {
   // TODO mtrace: print mtrace, need MTRACE_COND like ITRACE_COND
 #ifdef CONFIG_MTRACE
   #ifdef CONFIG_MTRACE_COND
-  if (CONFIG_MTRACE_COND)
+  if (MTRACE_COND)
   #endif
   Log("Read address " FMT_PADDR " at pc = " FMT_WORD, addr, cpu.pc);
 #endif
@@ -69,7 +69,7 @@ void paddr_write(paddr_t addr, int len, word_t data) {
   // TODO mtrace: print mtrace, need MTRACE_COND like ITRACE_COND
 #ifdef CONFIG_MTRACE
   #ifdef CONFIG_MTRACE_COND
-  if (CONFIG_MTRACE_COND)
+  if (MTRACE_COND)
   #endif
   Log("Write address " FMT_PADDR " with data " FMT_WORD "  at pc = " FMT_WORD, addr, data, cpu.pc);
 #endif
