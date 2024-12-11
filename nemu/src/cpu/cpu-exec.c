@@ -48,6 +48,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_WATCHPOINT
   if (check_wp()) {
     nemu_state.state = NEMU_STOP;
+    // TODO use dnpc instead
     uint32_t next_inst = paddr_read(cpu.pc, 4);
     printf(ANSI_FMT(FMT_WORD ":", ANSI_FG_BLUE) "\t0x%08x\n", cpu.pc, next_inst);
   }
@@ -112,7 +113,6 @@ void assert_fail_msg() {
   print_iRB(cpu.pc);
   destory_iRB();
 #endif
-  printf("nemu_state = %d\n", nemu_state.state);
   printf(ANSI_FMT("Dumping register values:\n", ANSI_FG_MAGENTA));
   isa_reg_display();
   statistic();

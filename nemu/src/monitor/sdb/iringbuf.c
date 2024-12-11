@@ -1,3 +1,4 @@
+#include <memory/host.h>
 #include <memory/paddr.h>
 #include "sdb.h"
 
@@ -52,7 +53,7 @@ void print_iRB(vaddr_t pc) {
         rptr = (rptr + 1) % iringbuf.capacity;
     }
     // error instruction
-    MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst_val = paddr_read(pc, ilen);
+    MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst_val = host_read(guest_to_host(pc), ilen);
     inst = (uint8_t *)&inst_val;
     printf("  --> " FMT_WORD ":", pc);
     display_inst(inst, ilen);
@@ -61,7 +62,7 @@ void print_iRB(vaddr_t pc) {
     // instructions behind
     for (int i = 0; i < TAIL_LEN; ++i) {
         pc += ilen;
-        inst_val = paddr_read(pc, ilen);
+        inst_val = host_read(guest_to_host(pc), ilen);
         inst = (uint8_t *)&inst_val;
         printf("%6s" FMT_WORD ":", "", pc);
         display_inst(inst, ilen);
