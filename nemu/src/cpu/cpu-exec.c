@@ -16,6 +16,7 @@
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
+#include <memory/host.h>
 #include <memory/paddr.h>
 #include <locale.h>
 #include <utils.h>
@@ -48,9 +49,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_WATCHPOINT
   if (check_wp()) {
     nemu_state.state = NEMU_STOP;
-    // TODO use dnpc instead
-    uint32_t next_inst = paddr_read(cpu.pc, 4);
-    printf(ANSI_FMT(FMT_WORD ":", ANSI_FG_BLUE) "\t0x%08x\n", cpu.pc, next_inst);
+    uint32_t next_inst = host_read(guest_to_host(dnpc), MUXDEF(CONFIG_ISA_x86, 8, 4));
+    printf(ANSI_FMT(FMT_WORD ":", ANSI_FG_BLUE) "\t0x%08x\n", dnpc, next_inst);
   }
 #endif
 }
