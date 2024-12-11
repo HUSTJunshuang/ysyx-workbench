@@ -52,10 +52,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     printf(ANSI_FMT(FMT_WORD ":", ANSI_FG_BLUE) "\t0x%08x\n", cpu.pc, next_inst);
   }
 #endif
-  // TODO itrace: add instruction to ringbuf
-#ifdef CONFIG_ITRACE
-  
-#endif
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
