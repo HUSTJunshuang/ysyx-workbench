@@ -54,7 +54,7 @@ void init_icb(const char *elf_file) {
         
         fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
         Assert(fscanf(icb.elf_fp, "%s", sec_name), "Read Section Name[%d] failed", i);
-        printf("Sec[%d] = %s\n", i, sec_name);
+        // printf("Sec[%d] = %s\n", i, sec_name);
         // if (strcmp(sec_name, ".symtab") == 0) {
         //     symtab_shdr = shdr;
         // }
