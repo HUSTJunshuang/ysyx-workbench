@@ -14,7 +14,7 @@ static ICB icb;
 static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) symtab_shdr;
 static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
 
-char test[1];
+char test[128];
 
 const size_t sym_size = sizeof(MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym));
 
@@ -60,7 +60,7 @@ void init_icb(const char *elf_file) {
         fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
         Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
         fseek(icb.elf_fp, shstrtab_shdr.sh_offset, SEEK_SET);
-        Assert(fread(test, 1, 1, icb.elf_fp), "Convert to char * failed");
+        Assert(fread(test, 1, 128, icb.elf_fp), "Convert to char * failed");
         printf("%s\n", &test[shdr.sh_name]);
         fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
         Assert(fscanf(icb.elf_fp, "%32s", sec_name), "Read Section Name[%d] failed", i);
