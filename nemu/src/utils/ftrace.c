@@ -44,7 +44,6 @@ void init_icb(const char *elf_file) {
     if (section_num == 0) {
         section_num = shdr.sh_size;
     }
-    printf("section num = %ld\n", section_num);
     // read .shstrtab
     Assert(Ehdr.e_shstrndx != SHN_UNDEF, "'%s' has no shstrtab", elf_file);
     MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shstrtab_shdr;
@@ -62,7 +61,6 @@ void init_icb(const char *elf_file) {
         Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
         fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
         Assert(fgets(sec_name, MAX_SEC_NAME_LEN, icb.elf_fp), "Read Section Name[%d] failed", i);
-        printf("Sec[%d] = %s\n", i, sec_name);
         if (strcmp(sec_name, ".symtab") == 0) {
             symtab_shdr = shdr;
         }
@@ -70,8 +68,6 @@ void init_icb(const char *elf_file) {
             strtab_shdr = shdr;
         }
     }
-    printf("symbol num = %ld, symbol name index = %d\n", symtab_shdr.sh_size / sym_size, symtab_shdr.sh_name);
-    printf("strtab offset = %ld\n", strtab_shdr.sh_offset);
 }
 
 #if (__GUEST_ISA__ == riscv32 || __GUEST_ISA__ == riscv64)
@@ -100,13 +96,17 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
     }
     if (rd == 1 || rd == 5) {
         printf(FMT_WORD ": %*scall [%s@" FMT_WORD "]\n", pc, icb.call_depth * 2, "", call_func, dnpc);
+        log_write(FMT_WORD ": %*scall [%s@" FMT_WORD "]\n", pc, icb.call_depth * 2, "", call_func, dnpc);
         ++icb.call_depth;
     }
     if (ret == 1 && rd == 0 && rs1 == 1) {
         --icb.call_depth;
         printf(FMT_WORD ": %*sret  [%s]\n", pc, icb.call_depth * 2, "", ret_func);
+        log_write(FMT_WORD ": %*sret  [%s]\n", pc, icb.call_depth * 2, "", ret_func);
     }
 }
+#else
+// TODO define architecture-specific function
 #endif
 
 #endif
