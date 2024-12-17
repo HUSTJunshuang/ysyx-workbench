@@ -1,16 +1,46 @@
 #include <common.h>
+#include <elf.h>
 
 #ifndef CONFIG_TARGET_AM
 
 // ftrace, invocation control block
 typedef struct {
   int call_depth;
+  FILE *elf_fp;
 } ICB;
 
 static ICB icb;
+// static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) symtab_shdr;
+// static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
 
-void init_icb() {
+void init_icb(const char *elf_file) {
+    MUXDEF(CONFIG_ISA64, Elf64_Ehdr, Elf32_Ehdr) Ehdr;
     icb.call_depth = 0;
+    icb.elf_fp = fopen(elf_file, "rb");
+    Assert(icb.elf_fp, "Can not open '%s'", elf_file);
+    // read ELFN_Ehdr
+    Assert(fread(&Ehdr, sizeof(Ehdr), 1, icb.elf_fp) == 1, "Read Elf%d_Ehdr failed", MUXDEF(CONFIG_ISA64, 64, 32));
+    // check magic number and hardware architecture
+    Assert(Ehdr.e_ident[0] == 0x7f, "'%s' is not a elf file, with EI_MAG0 = %x, expected 0x7f", elf_file, Ehdr.e_ident[0]);
+    Assert(Ehdr.e_ident[1] == 'E', "'%s' is not a elf file, with EI_MAG1 = '%c', expected 'E'", elf_file, Ehdr.e_ident[1]);
+    Assert(Ehdr.e_ident[2] == 'L', "'%s' is not a elf file, with EI_MAG2 = '%c', expected 'L'", elf_file, Ehdr.e_ident[2]);
+    Assert(Ehdr.e_ident[3] == 'F', "'%s' is not a elf file, with EI_MAG3 = '%c', expected 'F'", elf_file, Ehdr.e_ident[3]);
+    Assert(Ehdr.e_ident[4] != ELFCLASSNONE, "EI_CLASS invalid, with EI_CLASS = ELFCLASSNONE");
+    int arch = (Ehdr.e_ident[4] == ELFCLASS32) ? 32 : 
+                (Ehdr.e_ident[4] == ELFCLASS64) ? 64 : 0;
+    Assert(Ehdr.e_ident[4] == MUXDEF(CONFIG_ISA64, ELFCLASS64, ELFCLASS32), "Architecture dose not match, with EI_CLASS = %d-bit, expected %d-bit", arch, MUXDEF(CONFIG_ISA64, 64, 32));
+    // check section header table
+    Assert(Ehdr.e_shoff, "'%s' has no section header table", elf_file);
+    uint64_t section_num = Ehdr.e_shnum;
+    MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) initial_shdr;
+    fseek(icb.elf_fp, Ehdr.e_shoff, SEEK_SET);
+    Assert(fread(&initial_shdr, sizeof(initial_shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr failed", MUXDEF(CONFIG_ISA64, 64, 32));
+    if (section_num == 0) {
+        section_num = initial_shdr.sh_size;
+    }
+    printf("section num = %ld\n", section_num);
+    // MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) Shdr[section_num];
+    // for (int i = 0; i < section_num)
 }
 
 #if (__GUEST_ISA__ == riscv32 || __GUEST_ISA__ == riscv64)
