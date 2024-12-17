@@ -46,8 +46,7 @@ void init_icb(const char *elf_file) {
     if (section_num == 0) {
         section_num = shdr.sh_size;
     }
-    // printf("section num = %ld\n", section_num);
-    // // // MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) Shdr[section_num];
+    printf("section num = %ld\n", section_num);
     // char sec_name[64];
     // for (int i = 1; i < section_num; ++i) {
     //     fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
