@@ -10,8 +10,8 @@ typedef struct {
 } ICB;
 
 static ICB icb;
-// static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) symtab_shdr;
-// static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
+static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) symtab_shdr;
+static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
 
 void init_icb(const char *elf_file) {
     MUXDEF(CONFIG_ISA64, Elf64_Ehdr, Elf32_Ehdr) Ehdr;
@@ -32,15 +32,25 @@ void init_icb(const char *elf_file) {
     // check section header table
     Assert(Ehdr.e_shoff, "'%s' has no section header table", elf_file);
     uint64_t section_num = Ehdr.e_shnum;
-    MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) initial_shdr;
+    MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shdr;
     fseek(icb.elf_fp, Ehdr.e_shoff, SEEK_SET);
-    Assert(fread(&initial_shdr, sizeof(initial_shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr failed", MUXDEF(CONFIG_ISA64, 64, 32));
+    Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Initial Elf%d_Shdr failed", MUXDEF(CONFIG_ISA64, 64, 32));
     if (section_num == 0) {
-        section_num = initial_shdr.sh_size;
+        section_num = shdr.sh_size;
     }
     printf("section num = %ld\n", section_num);
     // MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) Shdr[section_num];
-    // for (int i = 0; i < section_num)
+    for (int i = 1; i < section_num; ++i) {
+        fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
+        Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", MUXDEF(CONFIG_ISA64, 64, 32), i);
+        if (shdr.sh_type == SHT_SYMTAB) {
+            symtab_shdr = shdr;
+        }
+        if (shdr.sh_type == SHT_STRTAB) {
+            strtab_shdr = shdr;
+        }
+    }
+    printf("symbol num = %ld\n", symtab_shdr.sh_size / sizeof(symtab_shdr));
 }
 
 #if (__GUEST_ISA__ == riscv32 || __GUEST_ISA__ == riscv64)
