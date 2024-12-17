@@ -85,21 +85,17 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
         // read sym
         fseek(icb.elf_fp, symtab_shdr.sh_offset + sym_size * i, SEEK_SET);
         Assert(fread(&sym, sizeof(sym), 1, icb.elf_fp), "Read Elf%d_Sym[%d] failed", XLEN, i);
-        // printf("sym[%d] info = %d, size = %ld\n", i, sym.st_info, sym.st_size);
         if (MUXDEF(CONFIG_ISA64, ELF64_ST_TYPE, ELF32_ST_TYPE)(sym.st_info) != STT_FUNC)    continue;
-        printf("sym[%d] is FUNC\n", i);
         vaddr_t func_start = sym.st_value;
         vaddr_t func_end = func_start + sym.st_size;
-        printf("func_start = 0x%lx, func_end = 0x%lx\n", func_start, func_end);
         if (pc >= func_start && pc < func_end) {
-            
             printf("0x%lx\n", strtab_shdr.sh_offset + sym.st_name);
             fseek(icb.elf_fp, strtab_shdr.sh_offset + sym.st_name, SEEK_SET);
             Assert(fgets(call_func, MAX_FUNC_NAME_LEN, icb.elf_fp), "Read call function name failed");
         }
         if (dnpc >= func_start && dnpc < func_end) {
             fseek(icb.elf_fp, strtab_shdr.sh_offset + sym.st_name, SEEK_SET);
-            Assert(fscanf(icb.elf_fp, "%256s", ret_func), "Read ret function name failed");
+            Assert(fgets(ret_func, MAX_FUNC_NAME_LEN, icb.elf_fp), "Read ret function name failed");
         }
     }
     if (rd == 1 || rd == 5) {
