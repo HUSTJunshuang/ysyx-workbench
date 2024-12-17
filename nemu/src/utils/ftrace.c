@@ -4,6 +4,8 @@
 
 #ifndef CONFIG_TARGET_AM
 
+#define MAX_FUNC_NAME_LEN 256
+
 // ftrace, invocation control block
 typedef struct {
   int call_depth;
@@ -57,10 +59,9 @@ void init_icb(const char *elf_file) {
     for (int i = 1; i < section_num; ++i) {
         fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
         Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
-        fseek(icb.elf_fp, shstrtab_shdr.sh_offset, SEEK_SET);
         fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
         Assert(fscanf(icb.elf_fp, "%32s", sec_name), "Read Section Name[%d] failed", i);
-        printf("Sec[%d] = %s, len = %ld\n", i, sec_name, strlen(sec_name));
+        printf("Sec[%d] = %s\n", i, sec_name);
         if (strcmp(sec_name, ".symtab") == 0) {
             symtab_shdr = shdr;
         }
@@ -70,7 +71,6 @@ void init_icb(const char *elf_file) {
     }
     printf("symbol num = %ld, symbol name index = %d\n", symtab_shdr.sh_size / sym_size, symtab_shdr.sh_name);
     printf("strtab offset = %ld\n", strtab_shdr.sh_offset);
-    // fclose(icb.elf_fp);
 }
 
 #if (__GUEST_ISA__ == riscv32 || __GUEST_ISA__ == riscv64)
@@ -79,29 +79,31 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
     int rs1 = BITS(inst, 19, 15);
     // process symtab
     uint64_t sym_num = symtab_shdr.sh_size / sym_size;
-    // char *call_func = NULL, *ret_func = NULL;
+    char call_func[MAX_FUNC_NAME_LEN], ret_func[MAX_FUNC_NAME_LEN];
     MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym) sym;
     for (int i = 0; i < sym_num; ++i) {
         // read sym
         fseek(icb.elf_fp, symtab_shdr.sh_offset + sym_size * i, SEEK_SET);
         Assert(fread(&sym, sizeof(sym), 1, icb.elf_fp), "Read Elf%d_Sym[%d] failed", XLEN, i);
         if (sym.st_info != STT_FUNC)    continue;
-        // vaddr_t func_start = sym.st_value;
-        // vaddr_t func_end = func_start + sym.st_size;
-        // if (pc >= func_start && pc < func_end) {
-        //     call_func = sym.st_name;
-        // }
-        // if (dnpc >= func_start && dnpc < func_end) {
-        //     ret_func = (char *)sym.st_name;
-        // }
+        vaddr_t func_start = sym.st_value;
+        vaddr_t func_end = func_start + sym.st_size;
+        if (pc >= func_start && pc < func_end) {
+            fseek(icb.elf_fp, strtab_shdr.sh_offset + sym.st_name, SEEK_SET);
+            Assert(fgets(call_func, MAX_FUNC_NAME_LEN, icb.elf_fp), "Read call function name failed");
+        }
+        if (dnpc >= func_start && dnpc < func_end) {
+            fseek(icb.elf_fp, strtab_shdr.sh_offset + sym.st_name, SEEK_SET);
+            Assert(fgets(ret_func, MAX_FUNC_NAME_LEN, icb.elf_fp), "Read ret function name failed");
+        }
     }
     if (rd == 1 || rd == 5) {
-        // printf(FMT_WORD ": %*scall [%s@" FMT_WORD "]\n", pc, icb.call_depth * 2, "", call_func, dnpc);
+        printf(FMT_WORD ": %*scall [%s@" FMT_WORD "]\n", pc, icb.call_depth * 2, "", call_func, dnpc);
         ++icb.call_depth;
     }
     if (ret == 1 && rd == 0 && rs1 == 1) {
         --icb.call_depth;
-        // printf(FMT_WORD ": %*sret  [%s]\n", pc, icb.call_depth * 2, "", ret_func);
+        printf(FMT_WORD ": %*sret  [%s]\n", pc, icb.call_depth * 2, "", ret_func);
     }
 }
 #endif
