@@ -89,6 +89,7 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
         vaddr_t func_start = sym.st_value;
         vaddr_t func_end = func_start + sym.st_size;
         if (pc >= func_start && pc < func_end) {
+            printf("0x%lx\n", strtab_shdr.sh_offset + sym.st_name);
             fseek(icb.elf_fp, strtab_shdr.sh_offset + sym.st_name, SEEK_SET);
             Assert(fgets(call_func, MAX_FUNC_NAME_LEN, icb.elf_fp), "Read call function name failed");
         }
