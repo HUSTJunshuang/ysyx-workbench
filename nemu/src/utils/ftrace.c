@@ -13,6 +13,7 @@ void init_icb() {
     icb.call_depth = 0;
 }
 
+#if (__GUEST_ISA__ == riscv32 || __GUEST_ISA__ == riscv64)
 void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
     int rd = BITS(inst, 11, 7);
     int rs1 = BITS(inst, 19, 15);
@@ -25,4 +26,6 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
         printf(FMT_WORD ": %*sret  [???]\n", pc, icb.call_depth * 2, "");
     }
 }
+#endif
+
 #endif
