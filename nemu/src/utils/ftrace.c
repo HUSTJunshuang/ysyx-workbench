@@ -90,11 +90,11 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
         vaddr_t func_end = func_start + sym.st_size;
         if (pc >= func_start && pc < func_end) {
             fseek(icb.elf_fp, strtab_shdr.sh_offset + sym.st_name, SEEK_SET);
-            Assert(fgets(call_func, MAX_FUNC_NAME_LEN, icb.elf_fp), "Read call function name failed");
+            Assert(fgets(ret_func, MAX_FUNC_NAME_LEN, icb.elf_fp), "Read call function name failed");
         }
         if (dnpc >= func_start && dnpc < func_end) {
             fseek(icb.elf_fp, strtab_shdr.sh_offset + sym.st_name, SEEK_SET);
-            Assert(fgets(ret_func, MAX_FUNC_NAME_LEN, icb.elf_fp), "Read ret function name failed");
+            Assert(fgets(call_func, MAX_FUNC_NAME_LEN, icb.elf_fp), "Read ret function name failed");
         }
     }
     if (rd == 1 || rd == 5) {
