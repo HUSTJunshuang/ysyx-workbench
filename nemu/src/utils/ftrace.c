@@ -35,8 +35,8 @@ void init_icb(const char *elf_file) {
     // check section header table
     Assert(Ehdr.e_shoff, "'%s' has no section header table", elf_file);
     Assert(Ehdr.e_shstrndx != SHN_UNDEF, "'%s' has no shstrtab", elf_file);
-    // MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shstrtab_shdr;
-    // fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shstrtab_shdr) * Ehdr.e_shstrndx, SEEK_SET);
+    MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shstrtab_shdr;
+    fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shstrtab_shdr) * Ehdr.e_shstrndx, SEEK_SET);
     // // TODO index较大会放在另一个位置
     // Assert(fread(&shstrtab_shdr, sizeof(shstrtab_shdr), 1, icb.elf_fp) == 1, "Read .shstrtab failed");
     // uint64_t section_num = Ehdr.e_shnum;
