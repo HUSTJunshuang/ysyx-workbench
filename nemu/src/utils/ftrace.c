@@ -4,7 +4,7 @@
 
 #ifndef CONFIG_TARGET_AM
 
-#define MAX_SEC_NAME_LEN 16
+#define MAX_SEC_NAME_LEN 32
 #define MAX_FUNC_NAME_LEN 256
 
 // ftrace, invocation control block
