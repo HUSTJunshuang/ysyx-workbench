@@ -85,8 +85,8 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
         // read sym
         fseek(icb.elf_fp, symtab_shdr.sh_offset + sym_size * i, SEEK_SET);
         Assert(fread(&sym, sizeof(sym), 1, icb.elf_fp), "Read Elf%d_Sym[%d] failed", XLEN, i);
-        printf("sym[%d] info = %d, size = %ld\n", i, sym.st_info, sym.st_size);
-        if (sym.st_info != STT_FUNC)    continue;
+        // printf("sym[%d] info = %d, size = %ld\n", i, sym.st_info, sym.st_size);
+        if (MUXDEF(CONFIG_ISA64, ELF64_ST_TYPE, ELF32_ST_TYPE)(sym.st_info) != STT_FUNC)    continue;
         printf("sym[%d] is FUNC\n", i);
         vaddr_t func_start = sym.st_value;
         vaddr_t func_end = func_start + sym.st_size;
