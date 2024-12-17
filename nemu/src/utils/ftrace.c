@@ -79,7 +79,6 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
     int rs1 = BITS(inst, 19, 15);
     // process symtab
     uint64_t sym_num = symtab_shdr.sh_size / sym_size;
-    printf("sym_num = %ld\n", sym_num);
     char call_func[MAX_FUNC_NAME_LEN], ret_func[MAX_FUNC_NAME_LEN];
     MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym) sym;
     for (int i = 0; i < sym_num; ++i) {
@@ -87,6 +86,7 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
         fseek(icb.elf_fp, symtab_shdr.sh_offset + sym_size * i, SEEK_SET);
         Assert(fread(&sym, sizeof(sym), 1, icb.elf_fp), "Read Elf%d_Sym[%d] failed", XLEN, i);
         if (sym.st_info != STT_FUNC)    continue;
+        printf("sym[%d] is FUNC\n", i);
         vaddr_t func_start = sym.st_value;
         vaddr_t func_end = func_start + sym.st_size;
         printf("func_start = 0x%lx, func_end = 0x%lx\n", func_start, func_end);
