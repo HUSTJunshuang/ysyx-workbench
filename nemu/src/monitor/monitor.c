@@ -115,7 +115,7 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize the invocation control block. */
   // TODO #ifdef CONFIG_FTRACE
-  init_icb(elf_file);
+  // init_icb(elf_file);
 
   /* Initialize memory. */
   init_mem();
