@@ -12,7 +12,7 @@ typedef struct {
 
 static ICB icb;
 static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) symtab_shdr;
-// static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
+static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
 
 const size_t sym_size = sizeof(MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym));
 
@@ -59,9 +59,9 @@ void init_icb(const char *elf_file) {
         if (strcmp(sec_name, ".symtab") == 0) {
             symtab_shdr = shdr;
         }
-        // if (strcmp(sec_name, ".strtab") == 0) {
-        //     strtab_shdr = shdr;
-        // }
+        if (strcmp(sec_name, ".strtab") == 0) {
+            strtab_shdr = shdr;
+        }
     }
     // printf("symbol num = %ld, symbol name index = %d\n", symtab_shdr.sh_size / sym_size, symtab_shdr.sh_name);
     // printf("strtab offset = %ld\n", strtab_shdr.sh_offset);
