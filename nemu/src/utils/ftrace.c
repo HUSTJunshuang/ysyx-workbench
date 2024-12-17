@@ -50,7 +50,7 @@ void init_icb(const char *elf_file) {
             strtab_shdr = shdr;
         }
     }
-    printf("symbol num = %ld\n", symtab_shdr.sh_size / sizeof(symtab_shdr));
+    printf("symbol num = %ld\n", symtab_shdr.sh_size / sizeof(MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym)));
 }
 
 #if (__GUEST_ISA__ == riscv32 || __GUEST_ISA__ == riscv64)
