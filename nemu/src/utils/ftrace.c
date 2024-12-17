@@ -4,6 +4,7 @@
 
 #ifndef CONFIG_TARGET_AM
 
+#define MAX_SEC_NAME_LEN 16
 #define MAX_FUNC_NAME_LEN 256
 
 // ftrace, invocation control block
@@ -60,7 +61,7 @@ void init_icb(const char *elf_file) {
         fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
         Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
         fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
-        Assert(fscanf(icb.elf_fp, "%32s", sec_name), "Read Section Name[%d] failed", i);
+        Assert(fgets(sec_name, MAX_SEC_NAME_LEN, icb.elf_fp), "Read Section Name[%d] failed", i);
         printf("Sec[%d] = %s\n", i, sec_name);
         if (strcmp(sec_name, ".symtab") == 0) {
             symtab_shdr = shdr;
