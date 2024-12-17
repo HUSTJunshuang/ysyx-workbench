@@ -14,6 +14,8 @@ static ICB icb;
 static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) symtab_shdr;
 static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
 
+char test[1];
+
 const size_t sym_size = sizeof(MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym));
 
 void init_icb(const char *elf_file) {
@@ -34,11 +36,6 @@ void init_icb(const char *elf_file) {
     Assert(Ehdr.e_ident[4] == MUXDEF(CONFIG_ISA64, ELFCLASS64, ELFCLASS32), "Architecture dose not match, with EI_CLASS = %d-bit, expected %d-bit", arch, XLEN);
     // check section header table
     Assert(Ehdr.e_shoff, "'%s' has no section header table", elf_file);
-    Assert(Ehdr.e_shstrndx != SHN_UNDEF, "'%s' has no shstrtab", elf_file);
-    MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shstrtab_shdr;
-    fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shstrtab_shdr) * Ehdr.e_shstrndx, SEEK_SET);
-    // TODO index较大会放在另一个位置
-    Assert(fread(&shstrtab_shdr, sizeof(shstrtab_shdr), 1, icb.elf_fp) == 1, "Read .shstrtab failed");
     uint64_t section_num = Ehdr.e_shnum;
     MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shdr;
     fseek(icb.elf_fp, Ehdr.e_shoff, SEEK_SET);
@@ -47,11 +44,24 @@ void init_icb(const char *elf_file) {
         section_num = shdr.sh_size;
     }
     printf("section num = %ld\n", section_num);
+    // read .shstrtab
+    Assert(Ehdr.e_shstrndx != SHN_UNDEF, "'%s' has no shstrtab", elf_file);
+    MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shstrtab_shdr;
+    if (Ehdr.e_shstrndx != SHN_XINDEX) {
+        fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shstrtab_shdr) * Ehdr.e_shstrndx, SEEK_SET);
+    }
+    else {
+        fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shstrtab_shdr) * shdr.sh_link, SEEK_SET);
+    }
+    Assert(fread(&shstrtab_shdr, sizeof(shstrtab_shdr), 1, icb.elf_fp) == 1, "Read .shstrtab failed");
+    // find .symtab and .strtab
     char sec_name[32];
     for (int i = 1; i < section_num; ++i) {
         fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
         Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
-        
+        fseek(icb.elf_fp, shstrtab_shdr.sh_offset, SEEK_SET);
+        Assert(fread(test, 1, 1, icb.elf_fp), "Convert to char * failed");
+        printf("%s\n", &test[shdr.sh_name]);
         fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
         Assert(fscanf(icb.elf_fp, "%32s", sec_name), "Read Section Name[%d] failed", i);
         printf("Sec[%d] = %s, len = %ld\n", i, sec_name, strlen(sec_name));
