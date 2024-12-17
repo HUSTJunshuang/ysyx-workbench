@@ -13,7 +13,9 @@ void init_icb() {
     icb.call_depth = 0;
 }
 
-void check_invoke(vaddr_t pc, vaddr_t dnpc, int rd, int rs1, int ret) {
+void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
+    int rd = BITS(inst, 11, 7);
+    int rs1 = BITS(inst, 19, 15);
     if (rd == 1 || rd == 5) {
         printf(FMT_WORD ": %*scall [???@" FMT_WORD "]\n", pc, icb.call_depth * 2, "", dnpc);
         ++icb.call_depth;
