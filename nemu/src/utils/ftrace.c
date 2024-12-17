@@ -1,5 +1,6 @@
 #include <common.h>
 #include <elf.h>
+#include <string.h>
 
 #ifndef CONFIG_TARGET_AM
 
@@ -33,6 +34,10 @@ void init_icb(const char *elf_file) {
     Assert(Ehdr.e_ident[4] == MUXDEF(CONFIG_ISA64, ELFCLASS64, ELFCLASS32), "Architecture dose not match, with EI_CLASS = %d-bit, expected %d-bit", arch, XLEN);
     // check section header table
     Assert(Ehdr.e_shoff, "'%s' has no section header table", elf_file);
+    Assert(Ehdr.e_shstrndx != SHN_UNDEF, "'%s' has no shstrtab", elf_file);
+    MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shstrtab_shdr;
+    fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shstrtab_shdr) * Ehdr.e_shstrndx, SEEK_SET);
+    Assert(fread(&shstrtab_shdr, sizeof(shstrtab_shdr), 1, icb.elf_fp) == 1, "Read .shstrtab failed");
     uint64_t section_num = Ehdr.e_shnum;
     MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shdr;
     fseek(icb.elf_fp, Ehdr.e_shoff, SEEK_SET);
@@ -45,10 +50,14 @@ void init_icb(const char *elf_file) {
     for (int i = 1; i < section_num; ++i) {
         fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
         Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
-        if (shdr.sh_type == SHT_SYMTAB) {
+        char sec_name[64];
+        fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
+        Assert(fscanf(icb.elf_fp, "%s", sec_name), "Read Section Name[%d] failed", i);
+        printf("Sec[%d] = %s\n", i, sec_name);
+        if (strcmp(sec_name, ".symtab")) {
             symtab_shdr = shdr;
         }
-        if (shdr.sh_type == SHT_STRTAB) {
+        if (strcmp(sec_name, ".strtab")) {
             strtab_shdr = shdr;
         }
     }
