@@ -94,7 +94,7 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
         }
         if (dnpc >= func_start && dnpc < func_end) {
             fseek(icb.elf_fp, strtab_shdr.sh_offset + sym.st_name, SEEK_SET);
-            Assert(fgets(ret_func, MAX_FUNC_NAME_LEN, icb.elf_fp), "Read ret function name failed");
+            Assert(fscanf(icb.elf_fp, "%256s", ret_func), "Read ret function name failed");
         }
     }
     if (rd == 1 || rd == 5) {
