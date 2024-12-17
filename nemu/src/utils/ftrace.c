@@ -47,7 +47,7 @@ void init_icb(const char *elf_file) {
     }
     printf("section num = %ld\n", section_num);
     // MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) Shdr[section_num];
-    char sec_name[256];
+    char sec_name[64];
     for (int i = 1; i < section_num; ++i) {
         fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
         Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
@@ -65,6 +65,7 @@ void init_icb(const char *elf_file) {
     // printf("symbol num = %ld, symbol name index = %d\n", symtab_shdr.sh_size / sym_size, symtab_shdr.sh_name);
     // printf("strtab offset = %ld\n", strtab_shdr.sh_offset);
     // fclose(icb.elf_fp);
+    return ;
 }
 
 #if (__GUEST_ISA__ == riscv32 || __GUEST_ISA__ == riscv64)
