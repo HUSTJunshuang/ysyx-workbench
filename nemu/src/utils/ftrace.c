@@ -21,8 +21,8 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
         ++icb.call_depth;
     }
     if (ret == 1 && rd == 0 && rs1 == 1) {
-        printf(FMT_WORD ": %*sret  [???@" FMT_WORD "]\n", pc, icb.call_depth * 2, "", dnpc);
         --icb.call_depth;
+        printf(FMT_WORD ": %*sret  [???]\n", pc, icb.call_depth * 2, "");
     }
 }
 #endif
