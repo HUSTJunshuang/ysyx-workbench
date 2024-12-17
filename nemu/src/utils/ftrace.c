@@ -33,8 +33,8 @@ void init_icb(const char *elf_file) {
                 (Ehdr.e_ident[4] == ELFCLASS64) ? 64 : 0;
     Assert(Ehdr.e_ident[4] == MUXDEF(CONFIG_ISA64, ELFCLASS64, ELFCLASS32), "Architecture dose not match, with EI_CLASS = %d-bit, expected %d-bit", arch, XLEN);
     // check section header table
-    // Assert(Ehdr.e_shoff, "'%s' has no section header table", elf_file);
-    // Assert(Ehdr.e_shstrndx != SHN_UNDEF, "'%s' has no shstrtab", elf_file);
+    Assert(Ehdr.e_shoff, "'%s' has no section header table", elf_file);
+    Assert(Ehdr.e_shstrndx != SHN_UNDEF, "'%s' has no shstrtab", elf_file);
     // MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shstrtab_shdr;
     // fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shstrtab_shdr) * Ehdr.e_shstrndx, SEEK_SET);
     // // TODO index较大会放在另一个位置
