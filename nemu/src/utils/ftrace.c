@@ -79,6 +79,7 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
     int rs1 = BITS(inst, 19, 15);
     // process symtab
     uint64_t sym_num = symtab_shdr.sh_size / sym_size;
+    printf("sym_num = %ld\n", sym_num);
     char call_func[MAX_FUNC_NAME_LEN], ret_func[MAX_FUNC_NAME_LEN];
     MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym) sym;
     for (int i = 0; i < sym_num; ++i) {
