@@ -59,6 +59,7 @@ void init_icb(const char *elf_file) {
         }
         if (strcmp(sec_name, ".strtab")) {
             strtab_shdr = shdr;
+            printf(".strtab index = %d\n", i);
         }
     }
     printf("symbol num = %ld, symbol name index = %d\n", symtab_shdr.sh_size / sym_size, symtab_shdr.sh_name);
