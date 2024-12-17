@@ -64,7 +64,7 @@ void init_icb(const char *elf_file) {
     }
     printf("symbol num = %ld, symbol name index = %d\n", symtab_shdr.sh_size / sym_size, symtab_shdr.sh_name);
     printf("strtab offset = %ld\n", strtab_shdr.sh_offset);
-    fclose(icb.elf_fp);
+    // fclose(icb.elf_fp);
 }
 
 #if (__GUEST_ISA__ == riscv32 || __GUEST_ISA__ == riscv64)
