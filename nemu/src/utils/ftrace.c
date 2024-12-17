@@ -12,7 +12,7 @@ typedef struct {
 
 static ICB icb;
 static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) symtab_shdr;
-// static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
+static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
 
 const size_t sym_size = sizeof(MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym));
 
@@ -53,21 +53,17 @@ void init_icb(const char *elf_file) {
         Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
         
         fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
-        char test[32];
-        int cnt = fscanf(icb.elf_fp, "%32s %32s", sec_name, test);
-        printf("cnt = %d\n", cnt);
-        // Assert(fscanf(icb.elf_fp, "%s", sec_name), "Read Section Name[%d] failed", i);
+        Assert(fscanf(icb.elf_fp, "%32s", sec_name), "Read Section Name[%d] failed", i);
         printf("Sec[%d] = %s, len = %ld\n", i, sec_name, strlen(sec_name));
-        printf("test = %s\n", test);
-        // if (strcmp(sec_name, ".symtab") == 0) {
-        //     symtab_shdr = shdr;
-        // }
-        // if (strcmp(sec_name, ".strtab") == 0) {
-        //     strtab_shdr = shdr;
-        // }
+        if (strcmp(sec_name, ".symtab") == 0) {
+            symtab_shdr = shdr;
+        }
+        if (strcmp(sec_name, ".strtab") == 0) {
+            strtab_shdr = shdr;
+        }
     }
-    // printf("symbol num = %ld, symbol name index = %d\n", symtab_shdr.sh_size / sym_size, symtab_shdr.sh_name);
-    // printf("strtab offset = %ld\n", strtab_shdr.sh_offset);
+    printf("symbol num = %ld, symbol name index = %d\n", symtab_shdr.sh_size / sym_size, symtab_shdr.sh_name);
+    printf("strtab offset = %ld\n", strtab_shdr.sh_offset);
     // fclose(icb.elf_fp);
 }
 
