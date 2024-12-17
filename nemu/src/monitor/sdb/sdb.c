@@ -145,7 +145,7 @@ void init_sdb() {
   /* Initialize the instruction ringbuffer. */
   #ifdef CONFIG_ITRACE
   init_iRB();
-  #endif
+  #endif  
 }
 
 

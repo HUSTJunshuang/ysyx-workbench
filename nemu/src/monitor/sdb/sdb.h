@@ -20,6 +20,7 @@
 
 word_t expr(char *e, bool *success);
 
+// watchpoint
 typedef struct watchpoint {
   int NO;
   struct watchpoint *front, *next;
@@ -33,6 +34,7 @@ void free_wp(int wp_id);
 void print_wp();
 bool check_wp();
 
+// iringbuffer
 typedef struct {
   const int capacity;
   int size;
