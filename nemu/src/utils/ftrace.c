@@ -12,7 +12,7 @@ typedef struct {
 
 static ICB icb;
 static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) symtab_shdr;
-static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
+// static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
 
 const size_t sym_size = sizeof(MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym));
 
@@ -33,38 +33,38 @@ void init_icb(const char *elf_file) {
                 (Ehdr.e_ident[4] == ELFCLASS64) ? 64 : 0;
     Assert(Ehdr.e_ident[4] == MUXDEF(CONFIG_ISA64, ELFCLASS64, ELFCLASS32), "Architecture dose not match, with EI_CLASS = %d-bit, expected %d-bit", arch, XLEN);
     // check section header table
-    Assert(Ehdr.e_shoff, "'%s' has no section header table", elf_file);
-    Assert(Ehdr.e_shstrndx != SHN_UNDEF, "'%s' has no shstrtab", elf_file);
-    MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shstrtab_shdr;
-    fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shstrtab_shdr) * Ehdr.e_shstrndx, SEEK_SET);
-    // TODO index较大会放在另一个位置
-    Assert(fread(&shstrtab_shdr, sizeof(shstrtab_shdr), 1, icb.elf_fp) == 1, "Read .shstrtab failed");
-    uint64_t section_num = Ehdr.e_shnum;
-    MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shdr;
-    fseek(icb.elf_fp, Ehdr.e_shoff, SEEK_SET);
-    Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Initial Elf%d_Shdr failed", XLEN);
-    if (section_num == 0) {
-        section_num = shdr.sh_size;
-    }
-    printf("section num = %ld\n", section_num);
-    // MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) Shdr[section_num];
-    char sec_name[64];
-    for (int i = 1; i < section_num; ++i) {
-        fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
-        Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
+    // Assert(Ehdr.e_shoff, "'%s' has no section header table", elf_file);
+    // Assert(Ehdr.e_shstrndx != SHN_UNDEF, "'%s' has no shstrtab", elf_file);
+    // MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shstrtab_shdr;
+    // fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shstrtab_shdr) * Ehdr.e_shstrndx, SEEK_SET);
+    // // TODO index较大会放在另一个位置
+    // Assert(fread(&shstrtab_shdr, sizeof(shstrtab_shdr), 1, icb.elf_fp) == 1, "Read .shstrtab failed");
+    // uint64_t section_num = Ehdr.e_shnum;
+    // MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shdr;
+    // fseek(icb.elf_fp, Ehdr.e_shoff, SEEK_SET);
+    // Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Initial Elf%d_Shdr failed", XLEN);
+    // if (section_num == 0) {
+    //     section_num = shdr.sh_size;
+    // }
+    // printf("section num = %ld\n", section_num);
+    // // MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) Shdr[section_num];
+    // char sec_name[64];
+    // for (int i = 1; i < section_num; ++i) {
+    //     fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
+    //     Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
         
-        fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
-        Assert(fscanf(icb.elf_fp, "%s", sec_name), "Read Section Name[%d] failed", i);
-        printf("Sec[%d] = %s\n", i, sec_name);
-        if (strcmp(sec_name, ".symtab") == 0) {
-            symtab_shdr = shdr;
-        }
-        if (strcmp(sec_name, ".strtab") == 0) {
-            strtab_shdr = shdr;
-        }
-    }
-    printf("symbol num = %ld, symbol name index = %d\n", symtab_shdr.sh_size / sym_size, symtab_shdr.sh_name);
-    printf("strtab offset = %ld\n", strtab_shdr.sh_offset);
+    //     fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
+    //     Assert(fscanf(icb.elf_fp, "%s", sec_name), "Read Section Name[%d] failed", i);
+    //     printf("Sec[%d] = %s\n", i, sec_name);
+    //     if (strcmp(sec_name, ".symtab") == 0) {
+    //         symtab_shdr = shdr;
+    //     }
+    //     if (strcmp(sec_name, ".strtab") == 0) {
+    //         strtab_shdr = shdr;
+    //     }
+    // }
+    // printf("symbol num = %ld, symbol name index = %d\n", symtab_shdr.sh_size / sym_size, symtab_shdr.sh_name);
+    // printf("strtab offset = %ld\n", strtab_shdr.sh_offset);
     // fclose(icb.elf_fp);
 }
 
