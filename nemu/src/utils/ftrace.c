@@ -48,21 +48,21 @@ void init_icb(const char *elf_file) {
     }
     printf("section num = %ld\n", section_num);
     // // MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) Shdr[section_num];
-    // char sec_name[64];
-    // for (int i = 1; i < section_num; ++i) {
-    //     fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
-    //     Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
+    char sec_name[64];
+    for (int i = 1; i < section_num; ++i) {
+        fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
+        Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
         
-    //     fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
-    //     Assert(fscanf(icb.elf_fp, "%s", sec_name), "Read Section Name[%d] failed", i);
-    //     printf("Sec[%d] = %s\n", i, sec_name);
-    //     if (strcmp(sec_name, ".symtab") == 0) {
-    //         symtab_shdr = shdr;
-    //     }
-    //     if (strcmp(sec_name, ".strtab") == 0) {
-    //         strtab_shdr = shdr;
-    //     }
-    // }
+        fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
+        Assert(fscanf(icb.elf_fp, "%s", sec_name), "Read Section Name[%d] failed", i);
+        printf("Sec[%d] = %s\n", i, sec_name);
+        // if (strcmp(sec_name, ".symtab") == 0) {
+        //     symtab_shdr = shdr;
+        // }
+        // if (strcmp(sec_name, ".strtab") == 0) {
+        //     strtab_shdr = shdr;
+        // }
+    }
     // printf("symbol num = %ld, symbol name index = %d\n", symtab_shdr.sh_size / sym_size, symtab_shdr.sh_name);
     // printf("strtab offset = %ld\n", strtab_shdr.sh_offset);
     // fclose(icb.elf_fp);
