@@ -54,7 +54,7 @@ void init_icb(const char *elf_file) {
         
         fseek(icb.elf_fp, shstrtab_shdr.sh_offset + shdr.sh_name, SEEK_SET);
         char test[64];
-        int cnt = fscanf(icb.elf_fp, "%s %s", sec_name, test);
+        int cnt = fscanf(icb.elf_fp, "%64s %64s", sec_name, test);
         printf("cnt = %d\n", cnt);
         // Assert(fscanf(icb.elf_fp, "%s", sec_name), "Read Section Name[%d] failed", i);
         printf("Sec[%d] = %s, len = %ld\n", i, sec_name, strlen(sec_name));
