@@ -43,6 +43,7 @@ void print_iRB(vaddr_t pc) {
     uint8_t *inst;
     printf(ANSI_FMT("Encountered an error while executing the following snippets:\n", ANSI_FG_MAGENTA));
     if (iringbuf.size == iringbuf.capacity) printf("%6s......\n", "");
+    printf("irb size = %d\n", iringbuf.size);
     // instructions executed
     for (int i = 0; i < iringbuf.size; ++i) {
         inst = (uint8_t *)&iringbuf.inst_buf[rptr];
