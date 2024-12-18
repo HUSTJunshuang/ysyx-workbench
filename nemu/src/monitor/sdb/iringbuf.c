@@ -54,6 +54,7 @@ void print_iRB(vaddr_t pc) {
         rptr = (rptr + 1) % iringbuf.capacity;
     }
     // error instruction
+    printf("pc = " FMT_WORD "\n", pc);
     MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst_val = host_read(guest_to_host(pc), ilen);
     inst = (uint8_t *)&inst_val;
     printf("  --> " FMT_WORD ":", pc);
