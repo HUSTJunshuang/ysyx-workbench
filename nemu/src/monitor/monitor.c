@@ -113,10 +113,6 @@ void init_monitor(int argc, char *argv[]) {
   /* Open the log file. */
   init_log(log_file);
 
-  /* Initialize the invocation control block. */
-  // TODO #ifdef CONFIG_FTRACE
-  init_icb(elf_file);
-
   /* Initialize memory. */
   init_mem();
 
@@ -134,6 +130,10 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize the simple debugger. */
   init_sdb();
+  
+  /* Initialize the ftrace. */
+  // TODO #ifdef CONFIG_FTRACE
+  init_icb(elf_file);
 
 #ifndef CONFIG_ISA_loongarch32r
   IFDEF(CONFIG_ITRACE, init_disasm(

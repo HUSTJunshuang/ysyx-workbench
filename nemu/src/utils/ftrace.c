@@ -72,6 +72,7 @@ void init_icb(const char *elf_file) {
 
 #if (__GUEST_ISA__ == riscv32 || __GUEST_ISA__ == riscv64)
 void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
+    if (icb.elf_fp == NULL) return ;
     int rd = BITS(inst, 11, 7);
     int rs1 = BITS(inst, 19, 15);
     // process symtab
