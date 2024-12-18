@@ -25,7 +25,7 @@ void engine_start() {
 #else
   /* Receive commands from user. */
   sdb_mainloop();
-  destroy_icb();
+  IFDEF(CONFIG_FTRACE, destroy_icb());
   close_log();
 #endif
 }

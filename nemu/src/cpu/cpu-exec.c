@@ -115,8 +115,7 @@ void assert_fail_msg() {
   print_iRB(cpu.pc);
   destory_iRB();
 #endif
-// TODO ifdef
-  destroy_icb();
+  IFDEF(CONFIG_FTRACE, destroy_icb());
   printf(ANSI_FMT("Dumping register values:\n", ANSI_FG_MAGENTA));
   isa_reg_display();
   statistic();

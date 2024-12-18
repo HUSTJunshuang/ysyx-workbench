@@ -78,10 +78,9 @@ void init_icb(const char *elf_file) {
 }
 
 void destroy_icb() {
-    Log("Closed elf file");
     if (icb.elf_fp != NULL) {
-        
         fclose(icb.elf_fp);
+        icb.elf_fp = NULL;
     }
 }
 
