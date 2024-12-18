@@ -24,11 +24,12 @@ $(BINARY):: compile_git
 
 # Some convenient rules
 
-override ARGS += --log=$(BUILD_DIR)/nemu-log.txt
+override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
 override ARGS += $(ARGS_DIFF)
 
 # Command to execute NEMU
 IMG ?=
+override ARGS += --elf=$(addsuffix .elf $(basename $(IMG)))
 # changed from := to =, to update ARGS in target "test"
 NEMU_EXEC = $(BINARY) $(ARGS) $(IMG)
 
