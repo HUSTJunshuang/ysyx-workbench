@@ -29,7 +29,7 @@ override ARGS += $(ARGS_DIFF)
 
 # Command to execute NEMU
 IMG ?=
-override ARGS += --elf=$(addsuffix .elf $(basename $(IMG)))
+override ARGS += --elf=$(addsuffix .elf, $(basename $(IMG)))
 # changed from := to =, to update ARGS in target "test"
 NEMU_EXEC = $(BINARY) $(ARGS) $(IMG)
 
