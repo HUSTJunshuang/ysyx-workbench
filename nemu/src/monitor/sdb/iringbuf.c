@@ -43,7 +43,6 @@ void print_iRB(vaddr_t pc) {
     uint8_t *inst;
     printf(ANSI_FMT("Encountered an error while executing the following snippets:\n", ANSI_FG_MAGENTA));
     if (iringbuf.size == iringbuf.capacity) printf("%6s......\n", "");
-    printf("irb size = %d\n", iringbuf.size);
     // instructions executed
     for (int i = 0; i < iringbuf.size; ++i) {
         inst = (uint8_t *)&iringbuf.inst_buf[rptr];
@@ -54,7 +53,6 @@ void print_iRB(vaddr_t pc) {
         rptr = (rptr + 1) % iringbuf.capacity;
     }
     // error instruction
-    printf("pc = " FMT_WORD "\n", pc);
     MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst_val = host_read(guest_to_host(pc), ilen);
     inst = (uint8_t *)&inst_val;
     printf("  --> " FMT_WORD ":", pc);
