@@ -16,6 +16,7 @@
 #include <cpu/cpu.h>
 
 void sdb_mainloop();
+void close_log();
 
 void engine_start() {
 #ifdef CONFIG_TARGET_AM
@@ -23,5 +24,6 @@ void engine_start() {
 #else
   /* Receive commands from user. */
   sdb_mainloop();
+  close_log();
 #endif
 }
