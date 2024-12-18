@@ -20,11 +20,15 @@ static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
 const size_t sym_size = sizeof(MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym));
 
 void init_icb(const char *elf_file) {
-    MUXDEF(CONFIG_ISA64, Elf64_Ehdr, Elf32_Ehdr) Ehdr;
     icb.call_depth = 0;
     icb.elf_fp = fopen(elf_file, "rb");
-    Assert(icb.elf_fp != NULL, "Can not open '%s'", elf_file);
+    // Assert(icb.elf_fp != NULL, "Can not open '%s'", elf_file);
+    if (icb.elf_fp == NULL) {
+        Log("Failed to open the elf file '%s'", elf_file);
+        return ;
+    }
     // read ELFN_Ehdr
+    MUXDEF(CONFIG_ISA64, Elf64_Ehdr, Elf32_Ehdr) Ehdr;
     Assert(fread(&Ehdr, sizeof(Ehdr), 1, icb.elf_fp) == 1, "Read Elf%d_Ehdr failed", XLEN);
     // check magic number and hardware architecture
     Assert(Ehdr.e_ident[0] == 0x7f, "'%s' is not a elf file, with EI_MAG0 = %x, expected 0x7f", elf_file, Ehdr.e_ident[0]);
