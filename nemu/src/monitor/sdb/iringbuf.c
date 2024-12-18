@@ -56,8 +56,8 @@ void print_iRB(vaddr_t pc) {
     }
     // error instruction
     MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst_val = host_read(guest_to_host(pc), ilen);
-    inst = (uint8_t *)&inst_val;printf("breakpoint\n");
-    printf("  --> " FMT_WORD ":", pc);
+    inst = (uint8_t *)&inst_val;
+    printf("  --> " FMT_WORD ":", pc);printf("breakpoint\n");
     display_inst(inst, ilen);
     disassemble(str_buf, sizeof(str_buf), pc, inst, ilen);
     printf("\t%s\n", str_buf);
