@@ -16,6 +16,7 @@ typedef struct {
 static ICB icb;
 static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) symtab_shdr;
 static MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) strtab_shdr;
+static uint64_t sym_num;
 
 const size_t sym_size = sizeof(MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym));
 
@@ -45,6 +46,7 @@ void init_icb(const char *elf_file) {
     MUXDEF(CONFIG_ISA64, Elf64_Shdr, Elf32_Shdr) shdr;
     fseek(icb.elf_fp, Ehdr.e_shoff, SEEK_SET);
     Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Initial Elf%d_Shdr failed", XLEN);
+    // if e_shnum == 0, then the section number is stored in the initial ElfN_Shdr.sh_size
     if (section_num == 0) {
         section_num = shdr.sh_size;
     }
@@ -59,7 +61,7 @@ void init_icb(const char *elf_file) {
     }
     Assert(fread(&shstrtab_shdr, sizeof(shstrtab_shdr), 1, icb.elf_fp) == 1, "Read .shstrtab failed");
     // find .symtab and .strtab
-    char sec_name[32];
+    char sec_name[MAX_SEC_NAME_LEN];
     for (int i = 1; i < section_num; ++i) {
         fseek(icb.elf_fp, Ehdr.e_shoff + sizeof(shdr) * i, SEEK_SET);
         Assert(fread(&shdr, sizeof(shdr), 1, icb.elf_fp) == 1, "Read Elf%d_Shdr[%d] failed", XLEN, i);
@@ -67,6 +69,7 @@ void init_icb(const char *elf_file) {
         Assert(fgets(sec_name, MAX_SEC_NAME_LEN, icb.elf_fp), "Read Section Name[%d] failed", i);
         if (strcmp(sec_name, ".symtab") == 0) {
             symtab_shdr = shdr;
+            sym_num = symtab_shdr.sh_size / sym_size;
         }
         if (strcmp(sec_name, ".strtab") == 0) {
             strtab_shdr = shdr;
@@ -79,15 +82,15 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
     if (icb.elf_fp == NULL) return ;
     int rd = BITS(inst, 11, 7);
     int rs1 = BITS(inst, 19, 15);
-    // process symtab
-    uint64_t sym_num = symtab_shdr.sh_size / sym_size;
     char call_func[MAX_FUNC_NAME_LEN], ret_func[MAX_FUNC_NAME_LEN];
+    // process symtab
     MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym) sym;
     for (int i = 0; i < sym_num; ++i) {
         // read sym
         fseek(icb.elf_fp, symtab_shdr.sh_offset + sym_size * i, SEEK_SET);
         Assert(fread(&sym, sizeof(sym), 1, icb.elf_fp), "Read Elf%d_Sym[%d] failed", XLEN, i);
         if (MUXDEF(CONFIG_ISA64, ELF64_ST_TYPE, ELF32_ST_TYPE)(sym.st_info) != STT_FUNC)    continue;
+        // process FUNC symbol
         vaddr_t func_start = sym.st_value;
         vaddr_t func_end = func_start + sym.st_size;
         if (pc >= func_start && pc < func_end) {
@@ -99,6 +102,7 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
             Assert(fgets(call_func, MAX_FUNC_NAME_LEN, icb.elf_fp), "Read ret function name failed");
         }
     }
+    // check jump type: call/ret
     if (rd == 1 || rd == 5) {
         printf(FMT_WORD ": %*scall [%s@" FMT_WORD "]\n", pc, icb.call_depth * 2, "", call_func, dnpc);
         log_write(FMT_WORD ": %*scall [%s@" FMT_WORD "]\n", pc, icb.call_depth * 2, "", call_func, dnpc);
