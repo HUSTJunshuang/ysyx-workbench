@@ -77,6 +77,13 @@ void init_icb(const char *elf_file) {
     }
 }
 
+void destroy_icb() {
+    if (icb.elf_fp != NULL) {
+        Log("Closed elf file");
+        fclose(icb.elf_fp);
+    }
+}
+
 #if (__GUEST_ISA__ == riscv32 || __GUEST_ISA__ == riscv64)
 void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
     if (icb.elf_fp == NULL) return ;

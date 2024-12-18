@@ -16,6 +16,7 @@
 #include <cpu/cpu.h>
 
 void sdb_mainloop();
+void destroy_icb();
 void close_log();
 
 void engine_start() {
@@ -24,6 +25,7 @@ void engine_start() {
 #else
   /* Receive commands from user. */
   sdb_mainloop();
+  destroy_icb();
   close_log();
 #endif
 }

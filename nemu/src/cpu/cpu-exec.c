@@ -38,7 +38,8 @@ void device_update();
 bool check_wp();
 void push_iRB(vaddr_t pc, MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst);
 void print_iRB(vaddr_t pc);
-void destory_iRB();
+void destory_iRB(); // BUG spell error
+void destroy_icb();
 void close_log();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
@@ -114,6 +115,8 @@ void assert_fail_msg() {
   print_iRB(cpu.pc);
   destory_iRB();
 #endif
+// TODO ifdef
+  destroy_icb();
   printf(ANSI_FMT("Dumping register values:\n", ANSI_FG_MAGENTA));
   isa_reg_display();
   statistic();
