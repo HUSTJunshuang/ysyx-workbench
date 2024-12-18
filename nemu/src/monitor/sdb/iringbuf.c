@@ -41,6 +41,8 @@ void push_iRB(vaddr_t pc, MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst) {
 void print_iRB(vaddr_t pc) {
     int rptr = (iringbuf.wptr + iringbuf.capacity - iringbuf.size) % iringbuf.capacity;
     uint8_t *inst;
+    // check started or not
+    if (iringbuf.size == 0) return ;
     printf(ANSI_FMT("Encountered an error while executing the following snippets:", ANSI_FG_MAGENTA) "\n");
     if (iringbuf.size == iringbuf.capacity) printf("%6s......\n", "");
     // instructions executed
