@@ -20,6 +20,7 @@
 
 word_t expr(char *e, bool *success);
 
+// watchpoint
 typedef struct watchpoint {
   int NO;
   struct watchpoint *front, *next;
@@ -32,5 +33,20 @@ WP* new_wp();
 void free_wp(int wp_id);
 void print_wp();
 bool check_wp();
+
+// iringbuffer
+typedef struct {
+  const int capacity;
+  int size;
+  vaddr_t *pc_buf;
+  // max instruction length: x86 -> 8B, others -> 4B
+  MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) *inst_buf;
+  int wptr;
+} iRB;
+
+void init_iRB();
+void push_iRB(vaddr_t pc, MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst);
+void print_iRB(vaddr_t pc);
+void destory_iRB();
 
 #endif

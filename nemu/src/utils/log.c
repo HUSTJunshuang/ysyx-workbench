@@ -30,6 +30,14 @@ void init_log(const char *log_file) {
   Log("Log is written to %s", log_file ? log_file : "stdout");
 }
 
+void close_log() {
+  if (log_fp != NULL) {
+    Log("Log file closed");
+    fclose(log_fp);
+    log_fp = NULL;
+  }
+}
+
 bool log_enable() {
   return MUXDEF(CONFIG_TRACE, (g_nr_guest_inst >= CONFIG_TRACE_START) &&
          (g_nr_guest_inst <= CONFIG_TRACE_END), false);

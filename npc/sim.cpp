@@ -53,6 +53,8 @@ int main() {
 	Verilated::mkdir("waves");
 	tfp->open("waves/sim.vcd");
 
+    // TODO define a function to read img file from shell
+    // reference: /home/junshuang/Project/ysyx/ysyx-workbench/nemu/src/monitor/monitor.c:49 load_img()
     // fill instruction memory
     for (int i = 0; i < 10; i++) {
         assert(i < MAX_INST);

@@ -16,6 +16,7 @@
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
+#include <memory/host.h>
 #include <memory/paddr.h>
 #include <locale.h>
 #include <utils.h>
@@ -35,6 +36,11 @@ static bool g_print_step = false;
 void device_update();
 
 bool check_wp();
+void push_iRB(vaddr_t pc, MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) inst);
+void print_iRB(vaddr_t pc);
+void destory_iRB(); // BUG spell error
+void destroy_icb();
+void close_log();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -45,8 +51,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_WATCHPOINT
   if (check_wp()) {
     nemu_state.state = NEMU_STOP;
-    uint32_t next_inst = paddr_read(cpu.pc, 4);
-    printf(ANSI_FMT(FMT_WORD ":", ANSI_FG_BLUE) "\t0x%08x\n", cpu.pc, next_inst);
+    uint32_t next_inst = host_read(guest_to_host(dnpc), MUXDEF(CONFIG_ISA_x86, 8, 4));
+    printf(ANSI_FMT(FMT_WORD ":", ANSI_FG_BLUE) "\t0x%08x\n", dnpc, next_inst);
   }
 #endif
 }
@@ -71,6 +77,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
+  // push to iringbuf
+  push_iRB(s->pc, s->isa.inst.val);
 
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -103,8 +111,15 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
+#ifdef CONFIG_ITRACE
+  print_iRB(cpu.pc);
+  destory_iRB();
+#endif
+  IFDEF(CONFIG_FTRACE, destroy_icb());
+  printf(ANSI_FMT("Dumping register values:\n", ANSI_FG_MAGENTA));
   isa_reg_display();
   statistic();
+  close_log();
 }
 
 /* Simulate how the CPU works. */

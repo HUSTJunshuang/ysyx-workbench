@@ -21,6 +21,7 @@
 static const uint32_t img [] = {
   0x00000297,  // auipc t0,0
   0x00028823,  // sb  zero,16(t0)
+  // 0x01212823,  // ERROR: sw    s2, 16(sp)
   0x0102c503,  // lbu a0,16(t0)
   0x00100073,  // ebreak (used as nemu_trap)
   0xdeadbeef,  // some data, in some system(IBM RS/6000),

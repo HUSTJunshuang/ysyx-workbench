@@ -17,17 +17,20 @@ void reverse(char *s, int len) {
     s[i] = tmp;
   }
 }
-int itoa(int num, char *s) {
+int itoa(const int num, char *s) {
   if (num == 0) {
     s[0] = '0';
     s[1] = '\0';
     return 1;
   }
   int len = 0;
-  while (num) {
-    s[len++] = '0' + (num % 10);
-    num /= 10;
+  int neg = (num < 0) ? 1 : 0;
+  long tmp = (num < 0) ? -(long)num : num;
+  while (tmp) {
+    s[len++] = '0' + (tmp % 10);
+    tmp /= 10;
   }
+  if (neg)  s[len++] = '-';
   s[len] = '\0';
   reverse(s, len);
   return len;
