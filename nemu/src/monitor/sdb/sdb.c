@@ -138,14 +138,10 @@ void init_sdb() {
   init_regex();
 
   /* Initialize the watchpoint pool. */
-  #ifdef CONFIG_WATCHPOINT
-  init_wp_pool();
-  #endif
+  IFDEF(CONFIG_WATCHPOINT, init_wp_pool());
 
   /* Initialize the instruction ringbuffer. */
-  #ifdef CONFIG_ITRACE
-  init_iRB();
-  #endif  
+  IFDEF(CONFIG_ITRACE, init_iRB());
 }
 
 
