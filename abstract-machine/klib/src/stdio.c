@@ -48,6 +48,14 @@ static inline bool _is_digit(char ch) {
   return (ch >= '0') && (ch <= '9');
 }
 
+static unsigned int _atoi(const char **str) {
+  unsigned int i = 0U;
+  while (_is_digit(**str)) {
+    i = i * 10U + (unsigned int)(*((*str)++) - '0');
+  }
+  return i;
+}
+
 // static size_t _out_reverse(out_fct_type out, char *buffer, size_t idx, size_t maxlen, const char *buf, size_t len, unsigned int width, unsigned int flags) {
 static size_t _out_reverse(out_fct_type out, char *buffer, size_t idx, size_t maxlen, const char *buf, size_t len) {
   // const size_t start_idx = idx;
@@ -178,8 +186,7 @@ static int _vsnprintf(out_fct_type out, char *buffer, size_t maxlen, const char 
     // filed width
     width = 0U;
     if (_is_digit(*fmt)) {
-      putstr("entered width\n");
-      width = atoi(fmt);
+      width = _atoi(&fmt);
     }
     else if (*fmt == '*') {
       int w = va_arg(ap, int);
@@ -198,7 +205,7 @@ static int _vsnprintf(out_fct_type out, char *buffer, size_t maxlen, const char 
       flags |= FLAG_PRECISION;
       ++fmt;
       if (_is_digit(*fmt)) {
-        precision = atoi(fmt);
+        precision = _atoi(&fmt);
       }
       else if (*fmt == '*') {
         int prec = va_arg(ap, int);
