@@ -178,6 +178,7 @@ static int _vsnprintf(out_fct_type out, char *buffer, size_t maxlen, const char 
     // filed width
     width = 0U;
     if (_is_digit(*fmt)) {
+      putstr("entered width\n");
       width = atoi(fmt);
     }
     else if (*fmt == '*') {
