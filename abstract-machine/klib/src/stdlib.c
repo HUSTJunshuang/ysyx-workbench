@@ -40,7 +40,7 @@ void *malloc(size_t size) {
 // #endif
   if (hbrk == NULL) {
     hbrk = (void *)ROUNDUP(heap.start, 8);
-    printf("heap.start = %d\n", heap.start);
+    printf("heap.start = %ld\n", heap.start);
     halt(0);
   }
   if (size == 0)  return NULL;
