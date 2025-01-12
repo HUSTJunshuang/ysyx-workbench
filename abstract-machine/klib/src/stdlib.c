@@ -46,6 +46,7 @@ void *malloc(size_t size) {
   size = (size_t)ROUNDUP(size, 8);
   char *old = hbrk;
   hbrk += size;
+  printf("after malloc, hbrk = 0x%lx\n", (unsigned long)hbrk);
   assert((uintptr_t)heap.start <= (uintptr_t)hbrk && (uintptr_t)hbrk < (uintptr_t)heap.end);
   return old;
 }
