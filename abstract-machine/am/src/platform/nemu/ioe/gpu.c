@@ -5,8 +5,8 @@
 
 void __am_gpu_init() {
   int hw = inl(VGACTL_ADDR);
-  int w = hw & 0xff00 * 32;
-  int h = hw & 0x00ff * 32;
+  int w = hw & 0xffff0000;
+  int h = hw & 0x0000ffff;
   uint32_t *fb = (uint32_t *)FB_ADDR;
   for (int i = 0; i < w * h; ++i) fb[i] = i;
   outl(SYNC_ADDR, 1);
