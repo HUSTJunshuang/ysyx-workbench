@@ -178,7 +178,7 @@ config DTRACE
 config DTRACE_COND
   depends on DTRACE
   string "Only trace device access when the condition is true"
-  default "strcmp(map->name, \"rtc\") != 0 && strcmp(map->name, \"serial\") != 0"
+  default "strcmp(map->name, \"rtc\") != 0 && strcmp(map->name, \"serial\") != 0 && strcmp(map->name, \"keyboard\") != 0"
 
 config WATCHPOINT
   bool "Enable watchpoint"
