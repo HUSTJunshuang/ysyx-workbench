@@ -24,6 +24,7 @@ endif
 
 remove_quote = $(patsubst "%",%,$(1))
 
+$(info $(CONFIG_ISA))
 # Extract variabls from menuconfig
 GUEST_ISA ?= $(call remove_quote,$(CONFIG_ISA))
 ENGINE ?= $(call remove_quote,$(CONFIG_ENGINE))
@@ -55,7 +56,10 @@ LDFLAGS += $(CFLAGS_BUILD)
 include $(NEMU_HOME)/scripts/config.mk
 
 ifdef CONFIG_TARGET_AM
-$(info "Defined CONFIG_TARGET_AM\n\n\n")
+$(info $(NAME))
+$(info )
+$(info )
+$(info )
 include $(AM_HOME)/Makefile
 LINKAGE += $(ARCHIVES)
 else
