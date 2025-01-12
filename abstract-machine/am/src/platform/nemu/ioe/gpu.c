@@ -26,7 +26,6 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   if (ctl->pixels != NULL) {
-  // if (ctl->w != 0 && ctl->h != 0) {
     uint32_t *fb = (uint32_t *)FB_ADDR;
     for (int dy = 0; dy < ctl->h; ++dy) {
       for (int dx = 0; dx < ctl->w; ++dx) {
