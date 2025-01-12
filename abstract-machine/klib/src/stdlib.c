@@ -40,7 +40,6 @@ void *malloc(size_t size) {
 // #endif
   if (hbrk == NULL) {
     hbrk = (void *)ROUNDUP(heap.start, 8);
-    printf("head.star = 0x%lx, heap.end = 0x%lx\n", (unsigned long)heap.start, (unsigned long)heap.end);
   }
   if (size == 0)  return NULL;
   size = (size_t)ROUNDUP(size, 8);
