@@ -21,7 +21,8 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
-  if (ctl->pixels != NULL) {
+  // if (ctl->pixels != NULL) {
+  if (ctl->w != 0 && ctl->h != 0) {
     if (ctl->h == 0)  panic("h = 0\n");
     if (ctl->w == 0)  panic("w = 0\n");
     int hw = inl(VGACTL_ADDR);
