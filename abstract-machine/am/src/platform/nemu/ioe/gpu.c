@@ -13,9 +13,12 @@ void __am_gpu_init() {
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
+  int hw = inl(VGACTL_ADDR);
+  int w = (hw & 0xffff0000) >> 16;
+  int h = hw & 0x0000ffff;
   *cfg = (AM_GPU_CONFIG_T) {
     .present = true, .has_accel = false,
-    .width = 0, .height = 0,
+    .width = w, .height = h,
     .vmemsz = 0
   };
 }
