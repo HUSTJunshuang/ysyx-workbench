@@ -21,8 +21,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
-  putstr("invoked __am_gpu_fbdraw\n");
-  if (ctl->pixels != NULL) {
+  if (ctl->pixels != NULL) {putstr("invoked __am_gpu_fbdraw and write\n");
     int hw = inl(VGACTL_ADDR);
     int w = (hw & 0xffff0000) >> 16;
     // int h = hw & 0x0000ffff;
