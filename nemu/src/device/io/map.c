@@ -54,7 +54,7 @@ void init_map() {
 
 word_t map_read(paddr_t addr, int len, IOMap *map) {
   assert(len >= 1 && len <= 8);
-  Log("Read device '%s'" "[" FMT_PADDR ", " FMT_PADDR "] @" FMT_PADDR, map->name, map->low, map->high, addr);
+  Log("Read %d bytes from device '%s'" "[" FMT_PADDR ", " FMT_PADDR "] @" FMT_PADDR, len, map->name, map->low, map->high, addr);
   check_bound(map, addr);
   paddr_t offset = addr - map->low;
   invoke_callback(map->callback, offset, len, false); // prepare data to read
@@ -64,7 +64,7 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
 
 void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
   assert(len >= 1 && len <= 8);
-  Log("Write device '%s'" "[" FMT_PADDR ", " FMT_PADDR "] @" FMT_PADDR "with data: " FMT_WORD, map->name, map->low, map->high, addr, data);
+  Log("Write %d bytes to device '%s'" "[" FMT_PADDR ", " FMT_PADDR "] @" FMT_PADDR " with data: " FMT_WORD, len, map->name, map->low, map->high, addr, data);
   check_bound(map, addr);
   paddr_t offset = addr - map->low;
   host_write(map->space + offset, len, data);
