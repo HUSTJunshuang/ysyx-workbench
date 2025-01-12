@@ -26,8 +26,8 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
     int w = (hw & 0xffff0000) >> 16;
     // int h = hw & 0x0000ffff;
     uint32_t *fb = (uint32_t *)FB_ADDR;
-    for (int dx = 0; dx < ctl->w; ++dx) {
-      for (int dy = 0; dy < ctl->h; ++dy) {
+    for (int dy = 0; dy < ctl->h; ++dy) {
+      for (int dx = 0; dx < ctl->w; ++dx) {
         fb[(ctl->x + dx) + (ctl->y + dy) * w] = ((uint32_t *)ctl->pixels)[(ctl->x + dx) + (ctl->y + dy) * ctl->w];
       }
     }
