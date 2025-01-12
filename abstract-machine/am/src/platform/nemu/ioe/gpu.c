@@ -5,18 +5,17 @@
 
 void __am_gpu_init() {
   int hw = inl(VGACTL_ADDR);
-  int w = hw & 0xff00;
-  int h = hw & 0x00ff;
+  int w = hw & 0xff00 * 32;
+  int h = hw & 0x00ff * 32;
   uint32_t *fb = (uint32_t *)FB_ADDR;
   for (int i = 0; i < w * h; ++i) fb[i] = i;
   outl(SYNC_ADDR, 1);
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
-  int hw = inl(VGACTL_ADDR);
   *cfg = (AM_GPU_CONFIG_T) {
     .present = true, .has_accel = false,
-    .width = hw & 0xff00, .height = hw & 0x00ff,
+    .width = 0, .height = 0,
     .vmemsz = 0
   };
 }
