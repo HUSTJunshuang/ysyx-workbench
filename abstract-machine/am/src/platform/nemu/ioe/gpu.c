@@ -9,11 +9,6 @@ void __am_gpu_init() {
   int hw = inl(VGACTL_ADDR);
   W = (hw & 0xffff0000) >> 16;
   H = hw & 0x0000ffff;
-  // int w = (hw & 0xffff0000) >> 16;
-  // int h = hw & 0x0000ffff;
-  // uint32_t *fb = (uint32_t *)FB_ADDR;
-  // for (int i = 0; i < w * h; ++i) fb[i] = i;
-  // outl(SYNC_ADDR, 1);
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
