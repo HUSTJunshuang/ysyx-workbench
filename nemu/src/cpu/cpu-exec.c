@@ -119,7 +119,7 @@ void assert_fail_msg() {
   printf(ANSI_FMT("Dumping register values:\n", ANSI_FG_MAGENTA));
   isa_reg_display();
   statistic();
-  close_log();
+  IFNDEF(CONFIG_TARGET_AM, close_log());
 }
 
 /* Simulate how the CPU works. */
