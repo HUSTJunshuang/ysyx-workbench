@@ -21,17 +21,17 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
-  if (ctl->pixels != NULL) {
-    int hw = inl(VGACTL_ADDR);
-    int w = (hw & 0xffff0000) >> 16;
-    // int h = hw & 0x0000ffff;
-    uint32_t *fb = (uint32_t *)FB_ADDR;
-    for (int dy = 0; dy < ctl->h; ++dy) {
-      for (int dx = 0; dx < ctl->w; ++dx) {
-        fb[(ctl->x + dx) + (ctl->y + dy) * w] = ((uint32_t *)ctl->pixels)[dx + dy * ctl->w];
-      }
-    }
-  }
+  // if (ctl->pixels != NULL) {
+  //   int hw = inl(VGACTL_ADDR);
+  //   int w = (hw & 0xffff0000) >> 16;
+  //   // int h = hw & 0x0000ffff;
+  //   uint32_t *fb = (uint32_t *)FB_ADDR;
+  //   for (int dy = 0; dy < ctl->h; ++dy) {
+  //     for (int dx = 0; dx < ctl->w; ++dx) {
+  //       fb[(ctl->x + dx) + (ctl->y + dy) * w] = ((uint32_t *)ctl->pixels)[dx + dy * ctl->w];
+  //     }
+  //   }
+  // }
   // int hw = inl(VGACTL_ADDR);
   // int w = (hw & 0xffff0000) >> 16;
   // int h = hw & 0x0000ffff;
