@@ -3,8 +3,12 @@
 
 #define SYNC_ADDR (VGACTL_ADDR + 4)
 
+static int W = 0, H = 0;
+
 void __am_gpu_init() {
-  // int hw = inl(VGACTL_ADDR);
+  int hw = inl(VGACTL_ADDR);
+  W = (hw & 0xffff0000) >> 16;
+  H = hw & 0x0000ffff;
   // int w = (hw & 0xffff0000) >> 16;
   // int h = hw & 0x0000ffff;
   // uint32_t *fb = (uint32_t *)FB_ADDR;
@@ -13,12 +17,9 @@ void __am_gpu_init() {
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
-  int hw = inl(VGACTL_ADDR);
-  int w = (hw & 0xffff0000) >> 16;
-  int h = hw & 0x0000ffff;
   *cfg = (AM_GPU_CONFIG_T) {
     .present = true, .has_accel = false,
-    .width = w, .height = h,
+    .width = W, .height = H,
     .vmemsz = 0
   };
 }
