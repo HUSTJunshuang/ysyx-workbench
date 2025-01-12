@@ -55,6 +55,7 @@ LDFLAGS += $(CFLAGS_BUILD)
 include $(NEMU_HOME)/scripts/config.mk
 
 ifdef CONFIG_TARGET_AM
+$(echo "Defined CONFIG_TARGET_AM")
 include $(AM_HOME)/Makefile
 LINKAGE += $(ARCHIVES)
 else
