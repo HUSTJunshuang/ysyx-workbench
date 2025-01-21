@@ -17,12 +17,8 @@ enum { NEMU_RUNNING, NEMU_STOP, NEMU_END, NEMU_ABORT, NEMU_QUIT };
 int nemu_state = 0;
 
 const int MAX_INST = 100;
-// TODO use dpi-c function to r/w mem in verilog
 int inst_mem[MAX_INST];
 int inst_cnt = 0;
-
-static long load_img() {
-}
 
 // DPI-C functions
 void set_nemu_state(int state) {

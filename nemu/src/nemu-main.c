@@ -38,8 +38,6 @@ int main(int argc, char *argv[]) {
   #endif
 #endif
 
-
-
   /* Start engine. */
   engine_start();
 
@@ -96,5 +94,4 @@ void p_test() {
   else Log("Expression evaluation test Passed!");
   return ;
 }
-
 #endif
