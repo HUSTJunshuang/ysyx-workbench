@@ -32,11 +32,10 @@ int main(int argc, char *argv[]) {
   am_init_monitor();
 #else
   init_monitor(argc, argv);
-#endif
-
-#ifdef CONFIG_POST
+  #ifdef CONFIG_POST
   /* Self check */
   func_check();
+  #endif
 #endif
 
   /* Start engine. */
@@ -45,7 +44,7 @@ int main(int argc, char *argv[]) {
   return is_exit_status_bad();
 }
 
-
+#ifndef CONFIG_TARGET_AM
 void func_check() {
   Log("Starting to check functions of nemu.");
 
@@ -95,3 +94,4 @@ void p_test() {
   else Log("Expression evaluation test Passed!");
   return ;
 }
+#endif

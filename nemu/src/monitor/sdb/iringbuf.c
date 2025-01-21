@@ -2,6 +2,8 @@
 #include <memory/paddr.h>
 #include "sdb.h"
 
+#ifdef CONFIG_ITRACE
+
 // for disassemble
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 // print instruction
@@ -79,3 +81,5 @@ void destory_iRB() {
     free(iringbuf.inst_buf);
     return ;
 }
+
+#endif
