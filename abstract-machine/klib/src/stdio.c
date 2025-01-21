@@ -364,25 +364,6 @@ static int _vsnprintf(out_fct_type out, char *buffer, size_t maxlen, const char 
 
 /* --------------- external function interfaces of stdio --------------- */
 int printf(const char *fmt, ...) {
-  // int size = 0;
-  // char *str = NULL;
-  // va_list ap;
-  // /* Determine required size */
-  // va_start(ap, fmt);
-  // size = vsnprintf(str, size, fmt, ap);
-  // va_end(ap);
-  // ++size; // for '\0'
-  // /* Print output to str */
-  // // str = malloc(size); // not implemented
-  // // va_start(ap, fmt);
-  // // size = vsnprintf(str, size, fmt, ap);
-  // // va_end(ap);
-  // // putstr(str);
-  // char buf[1024];
-  // va_start(ap, fmt);
-  // size = vsnprintf(buf, size, fmt, ap);
-  // va_end(ap);
-  // putstr(buf);
   va_list ap;
   va_start(ap, fmt);
   char buffer[1];
