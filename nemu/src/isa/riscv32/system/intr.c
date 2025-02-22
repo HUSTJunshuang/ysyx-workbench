@@ -34,7 +34,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   cpu.csr[mcause] = NO;
   word_t interrupt = NO >> MUXDEF(CONFIG_RV64, 63, 31);
   word_t index = (NO << 1) >> 1;
-  Log("Raised %s(trap code " FMT_DEC "): %s at pc = " FMT_WORD, interrupt ? "interrupt" : "exception", NO,
+  Log("%s(code " FMT_DEC "): %s Raised at pc = " FMT_WORD, interrupt ? "Interrupt" : "Exception", NO,
       interrupt ? intr_desc[index] : excp_desc[index], epc);
 
   return cpu.csr[mtvec];
