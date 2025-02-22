@@ -57,8 +57,6 @@ static int decode_exec(Decode *s) {
   int rd = 0;
   word_t src1 = 0, src2 = 0, imm = 0;
   s->dnpc = s->snpc;
-  // for isa_reg_str2val()
-  // bool success = true;
 
 #define INSTPAT_INST(s) ((s)->isa.inst.val)
 #define INSTPAT_MATCH(s, name, type, ... /* execute body */ ) { \
@@ -102,7 +100,6 @@ static int decode_exec(Decode *s) {
   INSTPAT("0100000 ????? ????? 101 ????? 01100 11", sra    , R, R(rd) = BITS(src1, XLEN - 1, XLEN - 1) ? ~((~src1) >> BITS(src2, MUXDEF(CONFIG_RV64, 5, 4), 0)) : (src1 >> BITS(src2, MUXDEF(CONFIG_RV64, 5, 4), 0)));
   INSTPAT("0000000 ????? ????? 110 ????? 01100 11", or     , R, R(rd) = src1 | src2);
   INSTPAT("0000000 ????? ????? 111 ????? 01100 11", and    , R, R(rd) = src1 & src2);
-  // TODO ecall for trap, invoke isa_raise_intr() in system/intr.c
   // ecall source, 8: U-/VU-mode, 9: HS-mode, 10: VS-mode, 11: M-mode
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(8, s->pc));
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , I, NEMUTRAP(s->pc, R(10))); // R(10) is $a0

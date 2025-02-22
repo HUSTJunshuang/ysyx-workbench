@@ -18,6 +18,7 @@
 
 #include <common.h>
 
+// CSR address map
 #define mstatus 0x300
 #define mtvec   0x305
 #define mepc    0x341

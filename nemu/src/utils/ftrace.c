@@ -110,7 +110,6 @@ void check_invoke(uint32_t inst, vaddr_t pc, vaddr_t dnpc, int ret) {
         }
     }
     // check jump type: call/ret
-    // TODO use isa_reg_str2val() instead of magic number
     if (rd == 1 || rd == 5) {
         printf(FMT_WORD ": %*scall [%s@" FMT_WORD "]\n", pc, icb.call_depth * 2, "", call_func, dnpc);
         log_write(FMT_WORD ": %*scall [%s@" FMT_WORD "]\n", pc, icb.call_depth * 2, "", call_func, dnpc);
